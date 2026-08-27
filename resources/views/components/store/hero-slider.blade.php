@@ -25,6 +25,26 @@
         ['image' => 'hero/hero-3.jpg', 'backdrop' => '#DDCBB5'],
     ];
 
+    $rtl = \App\Support\Locale::direction() === 'rtl';
+
+    /*
+     * Each plate has a right-handed twin for Arabic. An admin-uploaded slide
+     * has no twin, so it falls back to the one image it has — better a
+     * left-composed photograph than a broken one.
+     */
+    $slides = array_map(static function (array $slide) use ($disk): array {
+        // The dot is inside the capture, so it is restored with it —
+        // '-rtl$1' alone produced 'hero-1-rtljpg' and silently missed.
+        $twin = preg_replace('/(\.(?:jpg|jpeg|png|webp))$/i', '-rtl$1', $slide['image']);
+
+        // Checked rather than assumed: a slide uploaded through the admin has
+        // no twin, and a src pointing at a file that is not there would render
+        // a broken image where the hero should be.
+        $slide['image_rtl'] = $disk->exists($twin) ? $twin : $slide['image'];
+
+        return $slide;
+    }, $slides);
+
     $shopUrl = \Illuminate\Support\Facades\Route::has('store.shop')
         ? route('store.shop')
         : route('store.home');
@@ -73,26 +93,26 @@
                 {{-- A slow drift while the slide is on screen, so the band is
                      never quite still. Applied only to the active slide, so
                      the animation restarts with each turn. --}}
-                <img src="{{ $disk->url($slide['image']) }}"
+                {{--
+                    A plate composed for the reading direction.
+
+                    object-position could not solve this: the plate is 2.00 and
+                    the band about 2.05, so object-cover crops nothing
+                    horizontally and the focal point has nothing to move.
+
+                    The Arabic plate is the same photograph with the subject
+                    slid to the other side — not mirrored, because that would
+                    reverse the jacket's buttons and placket and show a garment
+                    that does not exist.
+                --}}
+                <img src="{{ $disk->url($rtl ? $slide['image_rtl'] : $slide['image']) }}"
                      alt=""
                      width="1122" height="1402"
                      loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
                      fetchpriority="{{ $index === 0 ? 'high' : 'auto' }}"
                      decoding="async"
                      :class="active === {{ $index }} ? 'hero-drift' : ''"
-                     {{--
-                         The crop, not a mirror, decides which side the model
-                         stands on: `object-cover` with the focal point at 22%
-                         in English and 78% in Arabic keeps her toward the
-                         leading edge, leaving the trailing half clear for the
-                         copy.
-
-                         The photograph is never flipped. Mirroring reverses
-                         buttons and plackets, which on a clothing site
-                         misrepresents the garment.
-                     --}}
-                     class="h-full w-full object-cover
-                            [object-position:22%_center] rtl:[object-position:78%_center]">
+                     class="h-full w-full object-cover object-center">
 
                 {{--
                     This slide's own words.
