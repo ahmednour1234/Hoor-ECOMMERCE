@@ -41,10 +41,13 @@
 
         {{-- Leading icon. Positioned with logical properties so it moves to
              the right edge in Arabic without a second rule. --}}
-        <span class="pointer-events-none absolute inset-y-0 start-0 flex w-11 items-center justify-center
-                     text-hoor-navy-400" aria-hidden="true">
-            <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        {{-- A quiet mark, not a glyph: the field's job is to be typed in,
+             and an icon that competes with the placeholder makes it harder to
+             read. --}}
+        <span class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center
+                     text-hoor-navy-300" aria-hidden="true">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
                 {!! $path !!}
             </svg>
         </span>
@@ -62,10 +65,10 @@
                @if ($required) required @endif
                @if ($type === 'email') dir="ltr" @endif
                {{ $attributes->except('class') }}
-               class="w-full rounded-md border bg-white/90 py-2.5 ps-11 text-sm text-hoor-navy-700
-                      transition placeholder:text-hoor-navy-400/60
+               class="w-full rounded-md border bg-white/90 py-2.5 ps-10 text-sm text-hoor-navy-700
+                      transition placeholder:text-hoor-navy-300
                       focus:border-hoor-navy-400 focus:outline-none focus:ring-2 focus:ring-hoor-denim-500/25
-                      {{ $isPassword ? 'pe-11' : 'pe-3' }}
+                      {{ $isPassword ? 'pe-10' : 'pe-3' }}
                       {{ $hasError ? 'border-red-400' : 'border-hoor-cream-300' }}">
 
         @if ($isPassword)
@@ -74,10 +77,10 @@
             <button type="button"
                     @click="shown = ! shown"
                     :aria-label="shown ? @js(__('auth.hide_password')) : @js(__('auth.show_password'))"
-                    class="absolute inset-y-0 end-0 flex w-11 items-center justify-center
-                           text-hoor-navy-400 transition hover:text-hoor-navy-600">
-                <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    class="absolute inset-y-0 end-0 flex w-10 items-center justify-center
+                           text-hoor-navy-300 transition hover:text-hoor-navy-500">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
                     <path x-show="! shown"
                           d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" />
                     <circle x-show="! shown" cx="12" cy="12" r="2.8" />
