@@ -1,0 +1,7 @@
+# Real product uploads belong to the deployment, not the repository.
+*
+!.gitignore
+
+# The seeded brand photography is the exception: the demo catalog references
+# these by path, so a fresh clone would otherwise show broken images.
+!hoor-*.png

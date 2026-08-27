@@ -1,0 +1,140 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+|--------------------------------------------------------------------------
+| HOOR demo catalog
+|--------------------------------------------------------------------------
+|
+| Product definitions consumed by ProductSeeder. Kept as data rather than
+| inline code so the range can be edited without touching seeder logic.
+|
+| Prices are whole EGP; the seeder converts them to piastres via Money.
+| Each entry lists the colour slugs and size codes it is offered in, which
+| the seeder expands into the full variant matrix.
+|
+*/
+
+return [
+    [
+        'slug'            => 'wide-leg-indigo-jeans',
+        'category'        => 'wide-leg',
+        'name_en'         => 'Wide Leg Indigo Jeans',
+        'name_ar'         => 'جينز واسع الساق نيلي',
+        'short_en'        => 'A high-rise wide leg in deep indigo denim.',
+        'short_ar'        => 'خصر عالٍ وساق واسعة بدنيم نيلي غامق.',
+        'description_en'  => 'Cut from rigid indigo denim with a high rise and a full, floor-skimming leg. Designed to hold its shape from morning to evening.',
+        'description_ar'  => 'مصنوع من دنيم نيلي متين بخصر عالٍ وساق واسعة تصل إلى الأرض. مصمم ليحافظ على قصّته من الصباح حتى المساء.',
+        'fabric_en'       => '100% cotton denim, 12oz',
+        'fabric_ar'       => 'دنيم قطن 100%، وزن 12',
+        'price'           => 1290,
+        'featured'        => true,
+        'new'             => true,
+        'colors'          => ['indigo', 'dark-wash', 'mid-blue'],
+        'sizes'           => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        'images'          => ['hoor-2.png', 'hoor-7.png'],
+    ],
+    [
+        'slug'            => 'straight-leg-dark-wash-jeans',
+        'category'        => 'straight-leg',
+        'name_en'         => 'Straight Leg Dark Wash Jeans',
+        'name_ar'         => 'جينز مستقيم أزرق غامق',
+        'short_en'        => 'A clean straight leg that carries from day to evening.',
+        'short_ar'        => 'قصّة مستقيمة أنيقة تناسب النهار والمساء.',
+        'description_en'  => 'A timeless straight leg in a dark, even wash. Mid-weight denim with just enough give for all-day wear.',
+        'description_ar'  => 'قصّة مستقيمة كلاسيكية بغسلة غامقة متجانسة. دنيم متوسط الوزن بمرونة كافية للارتداء اليومي.',
+        'fabric_en'       => '98% cotton, 2% elastane',
+        'fabric_ar'       => '98% قطن، 2% إيلاستين',
+        'price'           => 1150,
+        'sale'            => 920,
+        'featured'        => true,
+        'colors'          => ['dark-wash', 'black-denim'],
+        'sizes'           => ['S', 'M', 'L', 'XL'],
+        'images'          => ['hoor-3.png', 'hoor-8.png'],
+    ],
+    [
+        'slug'            => 'mom-fit-light-wash-jeans',
+        'category'        => 'mom-jeans',
+        'name_en'         => 'Mom Fit Light Wash Jeans',
+        'name_ar'         => 'جينز موم فيت أزرق فاتح',
+        'short_en'        => 'Relaxed through the hip with a gently tapered ankle.',
+        'short_ar'        => 'واسع عند الورك ويضيق قليلاً عند الكاحل.',
+        'description_en'  => 'The mom fit, softened. Roomy through the hip and thigh, tapering gently to the ankle in a sun-faded light wash.',
+        'description_ar'  => 'قصّة الموم بلمسة ناعمة. واسع عند الورك والفخذ ويضيق تدريجياً حتى الكاحل بغسلة فاتحة.',
+        'fabric_en'       => '100% cotton denim, 11oz',
+        'fabric_ar'       => 'دنيم قطن 100%، وزن 11',
+        'price'           => 990,
+        'new'             => true,
+        'colors'          => ['light-wash', 'mid-blue'],
+        'sizes'           => ['XS', 'S', 'M', 'L', 'XL'],
+        'images'          => ['hoor-6.png', 'hoor-10.png'],
+    ],
+    [
+        'slug'            => 'flared-black-denim-jeans',
+        'category'        => 'flared',
+        'name_en'         => 'Flared Black Denim Jeans',
+        'name_ar'         => 'جينز شارلستون أسود',
+        'short_en'        => 'A dramatic flare in a deep, colour-locked black.',
+        'short_ar'        => 'قصّة شارلستون لافتة بلون أسود ثابت.',
+        'description_en'  => 'Fitted to the knee, then released into a full flare. Colour-locked black denim that resists fading through repeated washes.',
+        'description_ar'  => 'ضيق حتى الركبة ثم يتسع بشكل كامل. دنيم أسود ثابت اللون يقاوم البهتان مع الغسيل المتكرر.',
+        'fabric_en'       => '97% cotton, 3% elastane',
+        'fabric_ar'       => '97% قطن، 3% إيلاستين',
+        'price'           => 1190,
+        'colors'          => ['black-denim'],
+        'sizes'           => ['S', 'M', 'L', 'XL', 'XXL'],
+        'images'          => ['hoor-9.png'],
+    ],
+    [
+        'slug'            => 'long-denim-skirt',
+        'category'        => 'denim-skirts',
+        'name_en'         => 'Long Denim Skirt',
+        'name_ar'         => 'جيبة دنيم طويلة',
+        'short_en'        => 'A floor-length denim skirt with a concealed walking split.',
+        'short_ar'        => 'جيبة دنيم بطول الأرض مع فتحة مشي مخفية.',
+        'description_en'  => 'Falls straight to the floor with a hidden back split so it moves easily. A HOOR staple.',
+        'description_ar'  => 'تنسدل مستقيمة حتى الأرض مع فتحة خلفية مخفية لسهولة الحركة. قطعة أساسية من حور.',
+        'fabric_en'       => '100% cotton denim, 12oz',
+        'fabric_ar'       => 'دنيم قطن 100%، وزن 12',
+        'price'           => 1090,
+        'featured'        => true,
+        'colors'          => ['indigo', 'dark-wash', 'ecru'],
+        'sizes'           => ['XS', 'S', 'M', 'L', 'XL'],
+        'images'          => ['hoor-4.png', 'hoor-5.png'],
+    ],
+    [
+        'slug'            => 'oversized-denim-jacket',
+        'category'        => 'jackets',
+        'name_en'         => 'Oversized Denim Jacket',
+        'name_ar'         => 'جاكيت دنيم أوفرسايز',
+        'short_en'        => 'A generous, layer-friendly denim jacket.',
+        'short_ar'        => 'جاكيت دنيم واسع يسهل تنسيقه فوق الملابس.',
+        'description_en'  => 'Dropped shoulders and a longer body make this an easy layer over everything in the range.',
+        'description_ar'  => 'أكتاف مسدلة وطول أكبر يجعلانه سهل التنسيق فوق كل قطع المجموعة.',
+        'fabric_en'       => '100% cotton denim, 13oz',
+        'fabric_ar'       => 'دنيم قطن 100%، وزن 13',
+        'price'           => 1450,
+        'sale'            => 1160,
+        'new'             => true,
+        'colors'          => ['mid-blue', 'light-wash', 'black-denim'],
+        'sizes'           => ['S', 'M', 'L', 'XL'],
+        'images'          => ['hoor-1.png', 'hoor-10.png'],
+    ],
+    [
+        'slug'            => 'wide-linen-blend-trousers',
+        'category'        => 'wide-trousers',
+        'name_en'         => 'Wide Linen Blend Trousers',
+        'name_ar'         => 'بنطلون واسع كتان',
+        'short_en'        => 'Breathable wide trousers made for Egyptian summers.',
+        'short_ar'        => 'بنطلون واسع يسمح بمرور الهواء لصيف مصر.',
+        'description_en'  => 'A linen-cotton blend that stays cool in heat, cut wide from the waist with a soft drape.',
+        'description_ar'  => 'مزيج من الكتان والقطن يبقى منعشاً في الحر، بقصّة واسعة من الخصر وانسدال ناعم.',
+        'fabric_en'       => '55% linen, 45% cotton',
+        'fabric_ar'       => '55% كتان، 45% قطن',
+        'price'           => 850,
+        'colors'          => ['ecru', 'sand', 'olive'],
+        'sizes'           => ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+        'images'          => ['hoor-5.png'],
+    ],
+];

@@ -1,0 +1,211 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'status' => [
+        'draft'     => 'Draft',
+        'published' => 'Published',
+        'archived'  => 'Archived',
+    ],
+
+    'stock' => [
+        'in_stock'     => 'In stock',
+        'low_stock'    => 'Only a few left',
+        'out_of_stock' => 'Out of stock',
+    ],
+
+    'labels' => [
+        'sale'     => 'Sale',
+        'new'      => 'New',
+        'featured' => 'Featured',
+        'from'     => 'From',
+        'sku'      => 'SKU',
+        'color'    => 'Colour',
+        'size'     => 'Size',
+        'fabric'   => 'Fabric',
+        'care'         => 'Care',
+        'view_product' => 'View product',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin catalog management
+    |--------------------------------------------------------------------------
+    */
+
+    'tabs' => [
+        'general'  => 'General',
+        'pricing'  => 'Pricing',
+        'images'   => 'Images',
+        'variants' => 'Variants',
+        'seo'      => 'SEO',
+    ],
+
+    'products' => [
+        'title'        => 'Products',
+        'subtitle'     => 'Manage the HOOR catalog, stock and pricing.',
+        'create'       => 'Add product',
+        'edit'         => 'Edit product',
+        'new'          => 'New product',
+        'none'         => 'No products yet.',
+        'none_hint'    => 'Add your first product to start building the catalog.',
+        'no_matches'   => 'No products match these filters.',
+        'search'       => 'Search by name, slug or SKU',
+        'all_statuses' => 'All statuses',
+        'all_categories' => 'All categories',
+        'all_stock'    => 'Any stock level',
+        'delete_confirm' => 'Delete this product? It can be restored later.',
+    ],
+
+    'fields' => [
+        'name_ar'          => 'Name (Arabic)',
+        'name_en'          => 'Name (English)',
+        'slug'             => 'URL slug',
+        'slug_hint'        => 'Leave blank to generate from the English name.',
+        'category'         => 'Category',
+        'short_desc_ar'    => 'Short description (Arabic)',
+        'short_desc_en'    => 'Short description (English)',
+        'description_ar'   => 'Description (Arabic)',
+        'description_en'   => 'Description (English)',
+        'fabric_ar'        => 'Fabric (Arabic)',
+        'fabric_en'        => 'Fabric (English)',
+        'care_ar'          => 'Care instructions (Arabic)',
+        'care_en'          => 'Care instructions (English)',
+        'status'           => 'Status',
+        'is_featured'      => 'Featured product',
+        'is_featured_hint' => 'Shown in the featured section on the home page.',
+        'is_new'           => 'New arrival',
+        'is_new_hint'      => 'Appears under "New in".',
+        'base_price'       => 'Base price',
+        'sale_price'       => 'Sale price',
+        'sale_price_hint'  => 'Leave blank when the product is not discounted.',
+        'meta_title_ar'    => 'Meta title (Arabic)',
+        'meta_title_en'    => 'Meta title (English)',
+        'meta_desc_ar'     => 'Meta description (Arabic)',
+        'meta_desc_en'     => 'Meta description (English)',
+        'image'            => 'Image',
+        'images'           => 'Images',
+        'alt_ar'           => 'Alt text (Arabic)',
+        'alt_en'           => 'Alt text (English)',
+        'sort_order'       => 'Sort order',
+        'is_active'        => 'Active',
+        'parent'           => 'Parent category',
+        'no_parent'        => 'Top level',
+        'hex'              => 'Hex colour',
+        'code'             => 'Code',
+        'stock'            => 'Stock',
+        'threshold'        => 'Low stock at',
+        'price_override'   => 'Price override',
+        'remove_image'     => 'Remove current image',
+    ],
+
+    'images' => [
+        'upload'        => 'Add images',
+        'upload_hint'   => 'JPG, PNG or WebP, up to :size MB each. The first image becomes the primary unless you choose another.',
+        'primary'       => 'Primary',
+        'set_primary'   => 'Set as primary',
+        'remove'        => 'Remove',
+        'none'          => 'No images yet.',
+        'pending'       => 'Will be uploaded when you save.',
+        'stored_note'   => 'Files are stored on disk; only their paths are saved in the database.',
+    ],
+
+    'variants' => [
+        'title'        => 'Variants',
+        'subtitle'     => 'Stock is tracked per variant, never on the product itself.',
+        'add'          => 'Add variant',
+        'generate'     => 'Generate matrix',
+        'generate_hint' => 'Create a row for every selected colour and size combination.',
+        'none'         => 'No variants yet. A product needs at least one variant to be sellable.',
+        'remove'       => 'Remove row',
+        'no_color'     => 'No colour',
+        'no_size'      => 'No size',
+        'sku_hint'     => 'Must be unique across the whole catalog.',
+        'inherits'     => 'Inherits product price',
+        'total_stock'  => 'Total stock: :count',
+    ],
+
+    'categories' => [
+        'title'          => 'Categories',
+        'subtitle'       => 'Organise the catalog and the storefront menu.',
+        'create'         => 'Add category',
+        'edit'           => 'Edit category',
+        'none'           => 'No categories yet.',
+        'products_count' => ':count products',
+        'children_count' => ':count sub-categories',
+        'delete_confirm' => 'Delete this category?',
+    ],
+
+    'colors' => [
+        'title'    => 'Colours',
+        'subtitle' => 'The denim washes and neutrals products are offered in.',
+        'create'   => 'Add colour',
+        'edit'     => 'Edit colour',
+        'none'     => 'No colours yet.',
+        'variants_count' => ':count variants',
+        'delete_confirm' => 'Delete this colour?',
+    ],
+
+    'sizes' => [
+        'title'      => 'Sizes',
+        'subtitle'   => 'The size run, in the order it should appear to shoppers.',
+        'create'     => 'Add size',
+        'edit'       => 'Edit size',
+        'none'       => 'No sizes yet.',
+        'order_hint' => 'Lower numbers appear first, so XS should sort before S.',
+        'variants_count' => ':count variants',
+        'delete_confirm' => 'Delete this size?',
+    ],
+
+    'validation' => [
+        'duplicate_sku_in_form'  => 'This SKU is already used by row :row of this form.',
+        'sku_taken'              => 'The SKU :sku is already used by another product.',
+        'duplicate_combination'  => 'This colour and size pair is already set on row :row.',
+        'sale_price_too_high'    => 'The sale price must be lower than the price it discounts.',
+        'self_parent'            => 'A category cannot be its own parent.',
+        'circular_parent'        => 'That category is a descendant of this one, which would create a loop.',
+    ],
+
+    'messages' => [
+        'created'          => 'Product ":name" was created.',
+        'updated'          => 'Product ":name" was saved.',
+        'deleted'          => 'Product ":name" was deleted.',
+        'category_created' => 'Category ":name" was created.',
+        'category_updated' => 'Category ":name" was saved.',
+        'category_deleted' => 'Category ":name" was deleted.',
+        'category_in_use'  => 'This category still has products or sub-categories, so it cannot be deleted.',
+        'color_created'    => 'Colour ":name" was created.',
+        'color_updated'    => 'Colour ":name" was saved.',
+        'color_deleted'    => 'Colour ":name" was deleted.',
+        'color_in_use'     => 'This colour is used by existing variants. Deactivate it instead.',
+        'size_created'     => 'Size ":name" was created.',
+        'size_updated'     => 'Size ":name" was saved.',
+        'size_deleted'     => 'Size ":name" was deleted.',
+        'size_in_use'      => 'This size is used by existing variants. Deactivate it instead.',
+        'has_errors'       => 'Please correct the highlighted fields.',
+    ],
+
+    /**
+     * Field names used in validation messages.
+     */
+    'attributes' => [
+        'name_ar'            => 'Arabic name',
+        'name_en'            => 'English name',
+        'slug'               => 'URL slug',
+        'category_id'        => 'category',
+        'base_price'         => 'base price',
+        'sale_price'         => 'sale price',
+        'status'             => 'status',
+        'hex'                => 'hex colour',
+        'code'               => 'code',
+        'sort_order'         => 'sort order',
+        'parent_id'          => 'parent category',
+        'images.*'           => 'image',
+        'variants.*.sku'     => 'SKU',
+        'variants.*.stock_quantity' => 'stock quantity',
+        'variants.*.low_stock_threshold' => 'low stock threshold',
+        'variants.*.price'   => 'variant price',
+        'variants.*.sale_price' => 'variant sale price',
+    ],
+];

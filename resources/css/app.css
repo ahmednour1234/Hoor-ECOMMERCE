@@ -1,0 +1,293 @@
+/* -------------------------------------------------------------------------
+   Fonts — must precede every other statement per the CSS spec.
+   Inter + Playfair Display carry the Latin UI; Noto Sans/Naskh Arabic carry
+   the Arabic UI. Both display faces are loaded so the language switch never
+   shows a flash of fallback type.
+   ------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Sans+Arabic:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* -------------------------------------------------------------------------
+   Design tokens
+   Mirrors ui/hoor-design-tokens.css so plain CSS and Tailwind stay in sync.
+   ------------------------------------------------------------------------- */
+@layer base {
+    :root {
+        --hoor-navy-900: #082540;
+        --hoor-navy-800: #0C2F53;
+        --hoor-denim-700: #416A8F;
+        --hoor-denim-400: #7E9BB7;
+        --hoor-sand-300: #D8C6B3;
+        --hoor-cream-100: #F7F3ED;
+        --hoor-white: #FFFDF9;
+        --hoor-gold-500: #B99355;
+        --hoor-charcoal: #1F2933;
+
+        --hoor-bg: var(--hoor-white);
+        --hoor-surface: var(--hoor-cream-100);
+        --hoor-text: var(--hoor-navy-900);
+        --hoor-text-muted: #637083;
+        --hoor-border: #E6DED4;
+    }
+
+    html {
+        -webkit-text-size-adjust: 100%;
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-hoor-cream-50 text-hoor-navy-700 antialiased;
+        font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    }
+
+    /* Arabic pages swap to the Arabic type stack and get a slightly larger
+       line-height, since Arabic script needs more vertical room to breathe. */
+    [lang='ar'] body,
+    [lang='ar'] input,
+    [lang='ar'] textarea,
+    [lang='ar'] select,
+    [lang='ar'] button {
+        @apply font-arabic;
+    }
+
+    [lang='ar'] body {
+        line-height: 1.85;
+    }
+
+    h1, h2, h3, h4 {
+        @apply font-display text-hoor-navy-700;
+        text-wrap: balance;
+    }
+
+    [lang='ar'] h1,
+    [lang='ar'] h2,
+    [lang='ar'] h3,
+    [lang='ar'] h4 {
+        @apply font-arabic-display;
+    }
+
+    /* Keyboard focus is always visible and always on-brand. */
+    :focus-visible {
+        @apply outline-none ring-2 ring-hoor-gold-500 ring-offset-2 ring-offset-hoor-cream-50;
+    }
+
+    ::selection {
+        @apply bg-hoor-navy-500 text-hoor-cream-50;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   Components
+   Shared primitives that Blade components compose. Kept here (rather than in
+   each Blade file) so button/input/card styling has one definition.
+   ------------------------------------------------------------------------- */
+@layer components {
+
+    /* --- Layout ------------------------------------------------------- */
+    .hoor-container {
+        @apply mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10;
+    }
+
+    /* --- Buttons ------------------------------------------------------ */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-sm px-6 py-3
+               text-sm font-medium tracking-wide transition duration-200 ease-hoor
+               disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .btn-primary {
+        @apply btn bg-hoor-navy-500 text-hoor-cream-50 shadow-card
+               hover:bg-hoor-navy-700 hover:shadow-card-hover active:bg-hoor-navy-800;
+    }
+
+    .btn-secondary {
+        @apply btn bg-hoor-denim-500 text-white hover:bg-hoor-denim-600 active:bg-hoor-denim-700;
+    }
+
+    .btn-outline {
+        @apply btn border border-hoor-navy-500 bg-transparent text-hoor-navy-500
+               hover:bg-hoor-navy-500 hover:text-hoor-cream-50;
+    }
+
+    .btn-ghost {
+        @apply btn bg-transparent text-hoor-navy-500 hover:bg-hoor-cream-100;
+    }
+
+    .btn-gold {
+        @apply btn bg-hoor-gold-500 text-hoor-navy-700 hover:bg-hoor-gold-600 hover:text-hoor-cream-50;
+    }
+
+    .btn-danger {
+        @apply btn bg-red-600 text-white hover:bg-red-700;
+    }
+
+    .btn-sm { @apply px-4 py-2 text-xs; }
+    .btn-lg { @apply px-8 py-4 text-base; }
+
+    /* --- Cards -------------------------------------------------------- */
+    .card {
+        @apply rounded-md border border-hoor-cream-300 bg-white shadow-card;
+    }
+
+    .card-hover {
+        @apply card transition duration-300 ease-hoor hover:-translate-y-1 hover:shadow-card-hover;
+    }
+
+    .card-body   { @apply p-5 sm:p-6; }
+    .card-header { @apply border-b border-hoor-cream-300 px-5 py-4 sm:px-6; }
+    .card-footer { @apply border-t border-hoor-cream-300 px-5 py-4 sm:px-6; }
+
+    /* --- Forms -------------------------------------------------------- */
+    .form-label {
+        @apply mb-1.5 block text-sm font-medium text-hoor-navy-700;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        @apply block w-full rounded-sm border-hoor-cream-300 bg-white text-hoor-navy-700
+               placeholder:text-hoor-muted shadow-sm transition
+               focus:border-hoor-denim-500 focus:ring-hoor-denim-500;
+    }
+
+    .form-error {
+        @apply mt-1.5 text-sm text-red-600;
+    }
+
+    .form-hint {
+        @apply mt-1.5 text-sm text-hoor-muted;
+    }
+
+    /* --- Badges ------------------------------------------------------- */
+    .badge {
+        @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1
+               text-xs font-medium leading-none;
+    }
+
+    .badge-navy    { @apply badge bg-hoor-navy-50 text-hoor-navy-600; }
+    .badge-denim   { @apply badge bg-hoor-denim-50 text-hoor-denim-600; }
+    .badge-gold    { @apply badge bg-hoor-gold-100 text-hoor-gold-700; }
+    .badge-neutral { @apply badge bg-hoor-cream-200 text-hoor-navy-600; }
+    .badge-success { @apply badge bg-emerald-50 text-emerald-700; }
+    .badge-warning { @apply badge bg-amber-50 text-amber-700; }
+    .badge-danger  { @apply badge bg-red-50 text-red-700; }
+
+    /* --- Filter chips -------------------------------------------------- */
+    .filter-chip {
+        @apply inline-flex items-center gap-1.5 rounded-full border border-hoor-cream-300
+               bg-white px-3 py-1 text-xs text-hoor-navy-600 transition
+               hover:border-hoor-navy-400 hover:text-hoor-navy-700;
+    }
+
+    /* --- Typography helpers ------------------------------------------- */
+    .eyebrow {
+        @apply text-xs font-medium uppercase tracking-editorial text-hoor-gold-600;
+    }
+
+    .section-title {
+        @apply font-display text-3xl text-hoor-navy-700 sm:text-4xl;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   RTL adjustments
+   Tailwind logical utilities (ms-/me-/ps-/pe-/start-/end-) handle most of the
+   flip; these cover the few properties without logical equivalents.
+   ------------------------------------------------------------------------- */
+@layer utilities {
+    [dir='rtl'] .rtl-flip {
+        transform: scaleX(-1);
+    }
+
+    /* Hide Alpine-controlled elements until Alpine boots, so drawers and
+       dropdowns never flash open on first paint. */
+    [x-cloak] { display: none !important; }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /*
+     * Elements that rise into place as they enter the viewport.
+     *
+     * Opt in by adding `.reveal`; the observer in
+     * store.partials.reveal-script adds `.is-revealed` when the element
+     * arrives. Wrap several in a `.reveal-group` and the script staggers them.
+     *
+     * The hidden state is the default, which is why the script's fallback
+     * branch matters more than its happy path: a page that fails to reveal is
+     * a blank page, not an unanimated one.
+     */
+    .reveal {
+        opacity: 0;
+        transform: translateY(1.25rem);
+        transition: opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+        transition-delay: var(--reveal-delay, 0ms);
+        will-change: opacity, transform;
+    }
+
+    .reveal.is-revealed {
+        opacity: 1;
+        transform: none;
+        will-change: auto;
+    }
+
+    /* A gentler variant for large blocks, which look wrong sliding far. */
+    .reveal-soft {
+        transform: translateY(0.5rem);
+    }
+
+    /*
+     * The hero.
+     *
+     * .hero-drift is a slow scale on the active photograph, so the band is
+     * never quite still; .hero-in lifts each line of copy as its slide
+     * arrives, staggered by --hero-delay.
+     *
+     * Both are applied by Alpine to the active slide only, which is what makes
+     * them restart on every turn rather than running once at load.
+     */
+    @keyframes hero-drift {
+        from { transform: scale(1); }
+        to   { transform: scale(1.06); }
+    }
+
+    .hero-drift {
+        animation: hero-drift 7s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes hero-in {
+        from { opacity: 0; transform: translateY(1rem); }
+        to   { opacity: 1; transform: none; }
+    }
+
+    .hero-in {
+        animation: hero-in 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation-delay: var(--hero-delay, 0ms);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .hero-drift,
+        .hero-in {
+            animation: none;
+        }
+    }
+
+    /*
+     * Someone who has asked for less motion gets the content, not the
+     * movement. Declared here as well as in the script, so the page is correct
+     * even before the script has run.
+     */
+    @media (prefers-reduced-motion: reduce) {
+        .reveal,
+        .reveal-soft {
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
+    }
+}

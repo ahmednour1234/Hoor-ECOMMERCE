@@ -1,0 +1,12 @@
+# Uploads are ignored by default: what a shop's staff upload belongs to that
+# deployment, not to the repository.
+*
+!.gitignore
+
+# The exception is the seeded brand imagery, which the demo catalog references
+# by path. Without it a fresh clone runs but shows a shop full of broken
+# images, so these are treated as fixtures rather than as uploads.
+!products/
+!products/*.png
+!hero/
+!hero/*.jpg
