@@ -34,6 +34,11 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+
+            // Validated server-side, not merely marked required in the markup:
+            // an HTML `required` attribute is a convenience for the browser,
+            // and a form posted without it would otherwise be accepted.
+            'terms' => ['accepted'],
         ]);
 
         $user = User::create([
