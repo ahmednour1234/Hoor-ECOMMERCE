@@ -58,16 +58,47 @@ class HeroRtlTest extends TestCase
     }
 
     /**
-     * The crop, not a mirror, decides which side the model stands on.
+     * Each direction gets a plate composed for it.
+     *
+     * object-position could not solve this: the plates are 2.00 and the band
+     * about 2.05, so object-cover crops nothing horizontally and the focal
+     * point has nothing to move. The fix is a second plate with the subject
+     * on the other side.
      */
-    public function test_the_focal_point_flips_with_the_writing_direction(): void
+    public function test_arabic_uses_the_right_handed_plates(): void
+    {
+        $this->seedSlide();
+
+        $english = $this->homepage('en');
+        $arabic = $this->homepage('ar');
+
+        $this->assertStringContainsString('hero-1.jpg', $english);
+        $this->assertStringNotContainsString('hero-1-rtl.jpg', $english);
+
+        $this->assertStringContainsString('hero-1-rtl.jpg', $arabic);
+    }
+
+    /**
+     * A slide uploaded through the admin has no right-handed twin, so it must
+     * fall back to the image it does have rather than to a missing file.
+     */
+    public function test_a_slide_without_a_twin_falls_back_to_its_own_image(): void
     {
         $this->seedSlide();
 
         $html = $this->homepage('ar');
 
-        $this->assertStringContainsString('object-position:22%', $html);
-        $this->assertStringContainsString('object-position:78%', $html);
+        // Nothing should point at a file that is not on the disk.
+        preg_match_all('#/storage/(hero/[^"]+\.jpg)#', $html, $matches);
+
+        $this->assertNotEmpty($matches[1]);
+
+        foreach (array_unique($matches[1]) as $path) {
+            $this->assertTrue(
+                \Illuminate\Support\Facades\Storage::disk(config('hoor.media.disk'))->exists($path),
+                "the hero references {$path}, which is not on the disk",
+            );
+        }
     }
 
     /**
