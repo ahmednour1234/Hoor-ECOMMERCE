@@ -8,14 +8,21 @@
 @php
     $disk = \Illuminate\Support\Facades\Storage::disk(config('hoor.media.disk'));
 
-    // Mixed aspect ratios keep the mosaic from reading as a plain grid. The
-    // square flat-lays are placed where a 1:1 crop is intended.
+    /*
+     * Mixed spans keep the mosaic from reading as a plain grid.
+     *
+     * `focus` decides where the square crop is taken from. The sources are 4:5
+     * portraits, so a 1:1 tile discards a fifth of the height — centred, that
+     * is 10% off the top, which is exactly where the head is. The portraits
+     * are therefore anchored high; the flat-lay is already square and keeps
+     * the centre.
+     */
     $tiles = [
-        ['file' => 'products/hoor-1.png',  'span' => 'sm:col-span-2 sm:row-span-2', 'ratio' => 'aspect-square'],
-        ['file' => 'products/hoor-7.png',  'span' => '',                            'ratio' => 'aspect-square'],
-        ['file' => 'products/hoor-3.png',  'span' => '',                            'ratio' => 'aspect-square'],
-        ['file' => 'products/hoor-10.png', 'span' => '',                            'ratio' => 'aspect-square'],
-        ['file' => 'products/hoor-6.png',  'span' => '',                            'ratio' => 'aspect-square'],
+        ['file' => 'products/hoor-1.png',  'span' => 'sm:col-span-2 sm:row-span-2', 'focus' => 'object-[50%_18%]'],
+        ['file' => 'products/hoor-7.png',  'span' => '',                            'focus' => 'object-[50%_18%]'],
+        ['file' => 'products/hoor-3.png',  'span' => '',                            'focus' => 'object-[50%_15%]'],
+        ['file' => 'products/hoor-10.png', 'span' => '',                            'focus' => 'object-center'],
+        ['file' => 'products/hoor-6.png',  'span' => '',                            'focus' => 'object-[50%_15%]'],
     ];
 
     // From settings rather than config, so the admin owns it.
@@ -34,15 +41,15 @@
         @foreach ($tiles as $index => $tile)
             <a href="{{ $instagram }}"
                target="_blank" rel="noopener noreferrer"
-               class="group relative overflow-hidden rounded-md bg-hoor-cream-100
-                      {{ $tile['span'] }} {{ $tile['ratio'] }}">
+               class="group relative aspect-square overflow-hidden rounded-md bg-hoor-cream-100
+                      {{ $tile['span'] }}">
 
                 <img src="{{ $disk->url($tile['file']) }}"
                      alt=""
                      loading="lazy"
                      decoding="async"
                      class="h-full w-full object-cover transition duration-700 ease-hoor
-                            group-hover:scale-105">
+                            group-hover:scale-105 {{ $tile['focus'] }}">
 
                 <span class="absolute inset-0 flex items-center justify-center bg-hoor-navy-900/0
                              transition duration-300 group-hover:bg-hoor-navy-900/35
