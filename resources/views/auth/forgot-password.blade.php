@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-layouts.guest>
     <x-slot:title>{{ __('auth.forgot_page.title') }} — {{ __('common.brand') }}</x-slot:title>
 
     <x-auth.heading :title="__('auth.forgot_page.title')"
@@ -33,4 +33,4 @@
             {{ __('auth.forgot_page.back') }}
         </a>
     </p>
-</x-guest-layout>
+</x-layouts.guest>

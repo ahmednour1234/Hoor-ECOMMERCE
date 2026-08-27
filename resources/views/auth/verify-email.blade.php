@@ -1,4 +1,4 @@
-<x-guest-layout>
+<x-layouts.guest>
     <x-slot:title>{{ __('auth.verify_page.title') }} — {{ __('common.brand') }}</x-slot:title>
 
     <x-auth.heading :title="__('auth.verify_page.title')"
@@ -26,4 +26,4 @@
             </button>
         </form>
     </div>
-</x-guest-layout>
+</x-layouts.guest>
