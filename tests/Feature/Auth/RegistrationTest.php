@@ -23,9 +23,27 @@ class RegistrationTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'terms' => '1',
         ]);
 
         $this->assertAuthenticated();
         $response->assertRedirect(route('store.home', ['locale' => 'en'], absolute: false));
+    }
+
+    /**
+     * The terms box is marked required in the markup, but that only binds a
+     * browser — the rule has to hold for a form posted any other way.
+     */
+    public function test_registration_requires_agreeing_to_the_terms(): void
+    {
+        $this->post('/en/register', [
+            'name' => 'Test User',
+            'email' => 'untermed@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])->assertSessionHasErrors('terms');
+
+        $this->assertGuest();
+        $this->assertDatabaseMissing('users', ['email' => 'untermed@example.com']);
     }
 }

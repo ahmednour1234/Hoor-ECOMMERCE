@@ -39,11 +39,12 @@
 
     <div class="relative mt-1.5" @if ($isPassword) x-data="{ shown: false }" @endif>
 
-        {{-- Leading icon. Positioned with logical properties so it moves to
-             the right edge in Arabic without a second rule. --}}
-        {{-- A quiet mark, not a glyph: the field's job is to be typed in,
-             and an icon that competes with the placeholder makes it harder to
-             read. --}}
+        {{-- Leading icon, positioned with logical properties so it moves to
+             the right edge in Arabic without a second rule.
+
+             A quiet mark, not a glyph: the field's job is to be typed in,
+             the field is there to be typed in, and an icon that competes
+             with the placeholder makes it harder to read. --}}
         <span class="pointer-events-none absolute inset-y-0 start-0 flex w-10 items-center justify-center
                      text-hoor-navy-300" aria-hidden="true">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
