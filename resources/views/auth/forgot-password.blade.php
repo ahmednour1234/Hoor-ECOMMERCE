@@ -1,25 +1,36 @@
-<x-layouts.guest>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+<x-guest-layout>
+    <x-slot:title>{{ __('auth.forgot_page.title') }} — {{ __('common.brand') }}</x-slot:title>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <x-auth.heading :title="__('auth.forgot_page.title')"
+                    :subtitle="__('auth.forgot_page.subtitle')" />
 
-    <form method="POST" action="{{ route('password.email') }}">
+    @if (session('status'))
+        <div class="mt-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            {{ session('status') }}
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('password.email') }}" class="mt-6 space-y-5">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <x-auth.field name="email"
+                      type="email"
+                      icon="mail"
+                      :label="__('auth.fields.email')"
+                      :placeholder="__('auth.fields.email_placeholder')"
+                      autocomplete="username"
+                      required
+                      autofocus />
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
+        <x-auth.submit :label="__('auth.forgot_page.submit')" />
     </form>
-</x-layouts.guest>
+
+    <x-auth.divider class="mt-6" />
+
+    <p class="text-center text-sm">
+        <a href="{{ route('login') }}"
+           class="text-hoor-denim-600 underline underline-offset-2 transition hover:text-hoor-gold-600">
+            {{ __('auth.forgot_page.back') }}
+        </a>
+    </p>
+</x-guest-layout>

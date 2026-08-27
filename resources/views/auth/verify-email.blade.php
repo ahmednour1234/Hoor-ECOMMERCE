@@ -1,31 +1,29 @@
-<x-layouts.guest>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+<x-guest-layout>
+    <x-slot:title>{{ __('auth.verify_page.title') }} — {{ __('common.brand') }}</x-slot:title>
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+    <x-auth.heading :title="__('auth.verify_page.title')"
+                    :subtitle="__('auth.verify_page.subtitle')" />
+
+    @if (session('status') === 'verification-link-sent')
+        <div class="mt-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            {{ __('auth.verify_page.sent') }}
         </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
+    <div class="mt-6 space-y-4">
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf
-
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
+            <x-auth.submit :label="__('auth.verify_page.resend')" />
         </form>
 
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                {{ __('Log Out') }}
+            <button type="submit"
+                    class="w-full rounded-md border border-hoor-cream-300 bg-white/80 px-6 py-2.5
+                           text-sm text-hoor-navy-600 transition hover:border-hoor-navy-300
+                           hover:text-hoor-navy-700">
+                {{ __('auth.verify_page.logout') }}
             </button>
         </form>
     </div>
-</x-layouts.guest>
+</x-guest-layout>
