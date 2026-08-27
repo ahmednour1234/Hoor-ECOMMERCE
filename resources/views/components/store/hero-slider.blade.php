@@ -80,8 +80,19 @@
                      fetchpriority="{{ $index === 0 ? 'high' : 'auto' }}"
                      decoding="async"
                      :class="active === {{ $index }} ? 'hero-drift' : ''"
-                     class="h-full w-full object-cover object-[22%_center]
-                            md:object-contain md:object-center rtl:scale-x-[-1]">
+                     {{--
+                         The crop, not a mirror, decides which side the model
+                         stands on: `object-cover` with the focal point at 22%
+                         in English and 78% in Arabic keeps her toward the
+                         leading edge, leaving the trailing half clear for the
+                         copy.
+
+                         The photograph is never flipped. Mirroring reverses
+                         buttons and plackets, which on a clothing site
+                         misrepresents the garment.
+                     --}}
+                     class="h-full w-full object-cover
+                            [object-position:22%_center] rtl:[object-position:78%_center]">
 
                 {{--
                     This slide's own words.
@@ -90,9 +101,18 @@
                     the last one's copy — the eyebrow read "Cash on delivery"
                     on all three.
                 --}}
+                {{--
+                    The copy occupies the half the model does not.
+
+                    A scrim covers the whole band on small screens, where the
+                    photograph fills the width and there is no free side; from
+                    sm up the words sit in the open half and the scrim lifts.
+                --}}
                 <div class="absolute inset-0 flex items-center bg-hoor-beige-100/70 sm:bg-transparent">
                     <div class="hoor-container">
-                        <div class="ms-auto max-w-md text-center sm:max-w-sm lg:me-10 lg:max-w-md">
+                        <div class="ms-auto max-w-md text-center sm:max-w-sm lg:me-10 lg:max-w-md
+                                    sm:rounded-md sm:bg-hoor-beige-100/45 sm:p-6 sm:backdrop-blur-[2px]
+                                    lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
 
                             <img src="{{ asset('images/brand/hoor-primary-blue.svg') }}"
                                  alt="{{ __('common.brand') }}"
