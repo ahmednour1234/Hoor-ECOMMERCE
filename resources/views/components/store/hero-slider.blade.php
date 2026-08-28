@@ -73,8 +73,9 @@
     aria-label="{{ __('store.hero.label') }}">
 
     {{-- Fixed height reserves the space before the photograph loads, so the
-         page never jumps as slides arrive. --}}
-    <div class="relative h-[30rem] w-full sm:h-[32rem] md:h-[30rem] lg:h-[44rem] xl:h-[46rem]">
+         page never jumps as slides arrive. The phone band is taller because it
+         holds the photograph and the words stacked rather than overlaid. --}}
+    <div class="relative h-[34rem] w-full sm:h-[32rem] md:h-[30rem] lg:h-[44rem] xl:h-[46rem]">
         @foreach ($slides as $index => $slide)
             <div x-show="active === {{ $index }}"
                  x-transition:enter="transition ease-hoor duration-700"
@@ -84,7 +85,7 @@
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  @if ($index > 0) x-cloak @endif
-                 class="absolute inset-0"
+                 class="absolute inset-0 flex flex-col sm:block"
                  style="background-color: {{ ($slide['backdrop'] ?? null) ?: '#CAB296' }};"
                  role="group"
                  aria-roledescription="slide"
@@ -111,8 +112,12 @@
                      loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
                      fetchpriority="{{ $index === 0 ? 'high' : 'auto' }}"
                      decoding="async"
+                     {{-- On a phone the plate keeps its own 2:1 shape, so
+                          the whole composition shows. Forcing it into a tall
+                          band cropped it to 40% of its width. --}}
                      :class="active === {{ $index }} ? 'hero-drift' : ''"
-                     class="h-full w-full object-cover object-center">
+                     class="aspect-[2/1] w-full shrink-0 object-cover object-center
+                            sm:aspect-auto sm:h-full">
 
                 {{--
                     This slide's own words.
@@ -128,7 +133,16 @@
                     photograph fills the width and there is no free side; from
                     sm up the words sit in the open half and the scrim lifts.
                 --}}
-                <div class="absolute inset-0 flex items-center bg-hoor-beige-100/70 sm:bg-transparent">
+                {{--
+                    The copy sits beside the model, in the half of the plate
+                    composed to be left empty.
+
+                    On a phone there is no empty half — the full 2:1 plate is
+                    on screen and every part of it carries the photograph — so
+                    the words fall below it in normal flow instead.
+                --}}
+                <div class="flex flex-1 items-center bg-hoor-beige-100
+                            sm:absolute sm:inset-0 sm:bg-transparent">
                     <div class="hoor-container">
                         <div class="ms-auto max-w-md text-center sm:max-w-sm lg:me-10 lg:max-w-md
                                     sm:rounded-md sm:bg-hoor-beige-100/45 sm:p-6 sm:backdrop-blur-[2px]
