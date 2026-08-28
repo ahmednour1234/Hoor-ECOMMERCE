@@ -64,6 +64,9 @@
         <x-auth.submit :label="__('auth.register.submit')" />
     </form>
 
+    {{-- Renders nothing when no provider is configured. --}}
+    <x-auth.social />
+
     <x-auth.divider :label="__('auth.or')" class="mt-6" />
 
     <p class="text-center text-sm text-hoor-navy-600/80">

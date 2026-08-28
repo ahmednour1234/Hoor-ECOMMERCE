@@ -100,6 +100,28 @@ class User extends Authenticatable
         return $this->hasMany(Order::class)->latest('created_at');
     }
 
+    /**
+     * Providers this customer has linked, such as Google.
+     *
+     * @return HasMany<SocialAccount, $this>
+     */
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
+
+    /**
+     * Whether this account can be signed into with a password.
+     *
+     * False for a customer who has only ever used Google: she has no password
+     * to type, and screens that offer one — the reset flow, a "change your
+     * password" form — would be offering her something that does not exist.
+     */
+    public function hasPassword(): bool
+    {
+        return filled($this->password);
+    }
+
     /** @return HasMany<CustomerAddress, $this> */
     public function addresses(): HasMany
     {

@@ -35,4 +35,23 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google sign-in
+    |--------------------------------------------------------------------------
+    |
+    | Create the credentials at console.cloud.google.com under
+    | APIs & Services -> Credentials -> OAuth client ID (Web application), and
+    | add the redirect below to that client's authorised redirect URIs.
+    |
+    | The sign-in button only appears once both values are set, so a shop that
+    | has not configured them shows no button rather than a broken one.
+    |
+    */
+
+    'google' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect'      => env('GOOGLE_REDIRECT_URI', env('APP_URL').'/auth/google/callback'),
+    ],
 ];
