@@ -40,6 +40,8 @@ return [
 
         'required'       => ':column is required.',
         'duplicate_variant' => 'Row :row already has this size and colour for the same product.',
+        'sku_taken' => 'SKU :sku already belongs to another variant.',
+        'failed'    => 'The import could not be completed. Nothing has been changed.',
         'duplicate_sku'  => 'SKU :sku is already used on row :row.',
         'unknown_category' => 'No category called ":value". Check the Reference sheet.',
         'unknown_size'   => 'No size called ":value". Check the Reference sheet.',

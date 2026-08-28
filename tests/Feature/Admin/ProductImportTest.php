@@ -257,6 +257,63 @@ class ProductImportTest extends TestCase
         $this->assertSame(0, Product::query()->count());
     }
 
+    /**
+     * The crash a real shop hit: a product already stocking a size and colour
+     * under one SKU, re-imported with a different SKU for the same
+     * combination. The old lookup was by SKU alone, so it missed the existing
+     * variant and collided with the unique index.
+     */
+    public function test_an_existing_combination_is_updated_not_duplicated(): void
+    {
+        $product = Product::factory()->create(['name_en' => 'Test Jeans', 'name_ar' => 'جينز']);
+
+        ProductVariant::factory()->create([
+            'product_id'     => $product->id,
+            'size_id'        => $this->small->id,
+            'color_id'       => $this->color->id,
+            'sku'            => 'OLD-SKU',
+            'stock_quantity' => 2,
+        ]);
+
+        $result = $this->importer()->import($this->sheet([
+            $this->row(['sku' => 'NEW-SKU', 'size' => 'S', 'stock' => '15']),
+        ]));
+
+        $this->assertFalse($result->hasErrors(), json_encode($result->errors));
+
+        // One variant still, updated rather than duplicated.
+        $this->assertSame(1, ProductVariant::query()->count());
+        $this->assertSame(15, ProductVariant::query()->value('stock_quantity'));
+
+        // And the corrected SKU came across.
+        $this->assertSame('NEW-SKU', ProductVariant::query()->value('sku'));
+    }
+
+    /**
+     * A SKU already belonging to a different variant is refused by row rather
+     * than colliding with the unique index on sku.
+     */
+    public function test_a_sku_belonging_to_another_variant_is_refused(): void
+    {
+        $other = Product::factory()->create(['name_en' => 'Another Product']);
+
+        ProductVariant::factory()->create([
+            'product_id' => $other->id,
+            'size_id'    => $this->large->id,
+            'color_id'   => $this->color->id,
+            'sku'        => 'TAKEN',
+        ]);
+
+        $result = $this->importer()->import($this->sheet([
+            $this->row(['sku' => 'TAKEN']),
+        ]));
+
+        $this->assertTrue($result->hasErrors());
+
+        // The product created before the rejection is rolled back with it.
+        $this->assertSame(0, Product::query()->where('name_en', 'Test Jeans')->count());
+    }
+
     public function test_a_sale_price_above_the_price_is_refused(): void
     {
         $result = $this->importer()->import($this->sheet([

@@ -40,6 +40,8 @@ return [
 
         'required'       => ':column مطلوب.',
         'duplicate_variant' => 'الصف :row به نفس المقاس واللون لنفس المنتج بالفعل.',
+        'sku_taken' => 'الكود :sku مستخدم بالفعل لمقاس آخر.',
+        'failed'    => 'تعذّر إتمام الاستيراد. لم يتغير أي شيء.',
         'duplicate_sku'  => 'الكود :sku مستخدم بالفعل في الصف :row.',
         'unknown_category' => 'لا يوجد تصنيف باسم ":value". راجعي ورقة Reference.',
         'unknown_size'   => 'لا يوجد مقاس باسم ":value". راجعي ورقة Reference.',

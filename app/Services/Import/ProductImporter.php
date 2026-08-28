@@ -82,11 +82,34 @@ class ProductImporter
             return $result;
         }
 
-        DB::transaction(function () use ($parsed, $imageDirectory, $result): void {
-            foreach ($this->groupByProduct($parsed) as $rowsForProduct) {
-                $this->importProduct($rowsForProduct, $imageDirectory, $result);
-            }
-        });
+        try {
+            DB::transaction(function () use ($parsed, $imageDirectory, $result): void {
+                foreach ($this->groupByProduct($parsed) as $rowsForProduct) {
+                    $this->importProduct($rowsForProduct, $imageDirectory, $result);
+                }
+
+                /*
+                 * A row rejected inside the transaction — a SKU clash, say —
+                 * has to undo everything before it, or the shop is told
+                 * nothing was imported while half of it was.
+                 */
+                if ($result->hasErrors()) {
+                    throw new ImportRejected();
+                }
+            });
+        } catch (ImportRejected) {
+            // Already recorded against its row; the rollback is the point.
+        } catch (\Throwable $e) {
+            /*
+             * A spreadsheet filled in by hand will find combinations nobody
+             * anticipated. The shop should be told the import failed, not
+             * shown a stack trace — and the transaction has already rolled
+             * back, so the catalogue is untouched.
+             */
+            \Illuminate\Support\Facades\Log::error('Product import failed', ['error' => $e->getMessage()]);
+
+            $result->addError(0, __('import.errors.failed'));
+        }
 
         return $result;
     }
@@ -356,7 +379,30 @@ class ProductImporter
      */
     private function importVariant(Product $product, array $row, ProductImportResult $result): void
     {
-        $variant = ProductVariant::query()->where('sku', $row['sku'])->first();
+        /*
+         * The combination identifies the variant; the SKU is a label on it.
+         *
+         * Looking up by SKU alone meant a product already stocking size M in
+         * Indigo under an older SKU was not found, and the insert collided
+         * with the unique index on (product, size, colour).
+         *
+         * So the combination is asked for first. Falling back to the SKU
+         * catches the reverse case: a sheet that keeps the SKU but corrects
+         * the size or colour.
+         */
+        $variant = ProductVariant::query()
+            ->where('product_id', $product->id)
+            ->where('size_id', $row['size_id'])
+            ->where('color_id', $row['color_id'])
+            ->first()
+            // The SKU fallback is scoped to this product. Unscoped, a SKU
+            // belonging to a different product was treated as this variant,
+            // and the import quietly moved someone else's variant across
+            // instead of refusing the row.
+            ?? ProductVariant::query()
+                ->where('product_id', $product->id)
+                ->where('sku', $row['sku'])
+                ->first();
 
         $attributes = [
             'product_id'     => $product->id,
@@ -366,11 +412,29 @@ class ProductImporter
             'is_active'      => true,
         ];
 
+        /*
+         * A SKU already used by a different variant would collide with the
+         * unique index. Refusing by row is more useful than a constraint
+         * error, and the whole import is rolled back anyway.
+         */
+        $clash = ProductVariant::query()
+            ->where('sku', $row['sku'])
+            ->when($variant !== null, fn ($query) => $query->whereKeyNot($variant->id))
+            ->exists();
+
+        if ($clash) {
+            $result->addError($row['row'], __('import.errors.sku_taken', ['sku' => $row['sku']]));
+
+            return;
+        }
+
         if ($variant === null) {
             ProductVariant::create($attributes + ['sku' => $row['sku']]);
             $result->variantsCreated++;
         } else {
-            $variant->update($attributes);
+            // The SKU comes across too, so a sheet correcting one updates the
+            // variant rather than silently keeping the old label.
+            $variant->update($attributes + ['sku' => $row['sku']]);
             $result->variantsUpdated++;
         }
     }
