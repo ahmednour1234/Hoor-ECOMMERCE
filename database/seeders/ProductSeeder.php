@@ -35,9 +35,9 @@ class ProductSeeder extends Seeder
         $colors = Color::query()->ordered()->get()->keyBy('slug');
         $categories = Category::query()->get()->keyBy('slug');
 
-        foreach ($this->definitions() as $definition) {
-            DB::transaction(function () use ($definition, $sizes, $colors, $categories): void {
-                $this->seedProduct($definition, $sizes, $colors, $categories);
+        foreach ($this->definitions() as $index => $definition) {
+            DB::transaction(function () use ($index, $definition, $sizes, $colors, $categories): void {
+                $this->seedProduct($definition, $sizes, $colors, $categories, $index);
             });
         }
     }
@@ -48,7 +48,7 @@ class ProductSeeder extends Seeder
      * @param  Collection<string, Color>  $colors
      * @param  Collection<string, Category>  $categories
      */
-    private function seedProduct(array $definition, Collection $sizes, Collection $colors, Collection $categories): void
+    private function seedProduct(array $definition, Collection $sizes, Collection $colors, Collection $categories, int $index = 0): void
     {
         $category = $categories->get($definition['category']);
 
@@ -79,7 +79,15 @@ class ProductSeeder extends Seeder
                 'meta_title_ar'        => $definition['name_ar'].' | حور',
                 'meta_description_en'  => $definition['short_en'],
                 'meta_description_ar'  => $definition['short_ar'],
-                'published_at'         => now(),
+                /*
+                 * Staggered rather than all at one instant.
+                 *
+                 * A seeder that stamps every product with the same second
+                 * leaves "newest first" with nothing to sort by, so the
+                 * homepage rails came back in whatever order the database
+                 * happened to return.
+                 */
+                'published_at'         => now()->subDays($index),
             ],
         );
 

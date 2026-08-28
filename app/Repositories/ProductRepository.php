@@ -160,6 +160,9 @@ class ProductRepository
         return $this->storefrontQuery()
             ->where('is_new', true)
             ->orderByDesc('published_at')
+            // Products published in the same second, from a seeder or a
+            // bulk publish, would otherwise come back in any order.
+            ->orderByDesc('id')
             ->limit($limit)
             ->get();
     }
@@ -174,6 +177,9 @@ class ProductRepository
         return $this->storefrontQuery()
             ->featured()
             ->orderByDesc('published_at')
+            // Products published in the same second, from a seeder or a
+            // bulk publish, would otherwise come back in any order.
+            ->orderByDesc('id')
             ->limit($limit)
             ->get();
     }
@@ -189,6 +195,9 @@ class ProductRepository
             ->whereNotNull('sale_price')
             ->whereColumn('sale_price', '<', 'base_price')
             ->orderByDesc('published_at')
+            // Products published in the same second, from a seeder or a
+            // bulk publish, would otherwise come back in any order.
+            ->orderByDesc('id')
             ->limit($limit)
             ->get();
     }
@@ -231,6 +240,9 @@ class ProductRepository
             ->whereNotIn('id', $products->modelKeys())
             ->inStock()
             ->orderByDesc('published_at')
+            // Products published in the same second, from a seeder or a
+            // bulk publish, would otherwise come back in any order.
+            ->orderByDesc('id')
             ->limit($target - $products->count())
             ->get();
 
@@ -384,7 +396,7 @@ class ProductRepository
     private function applyBestSellingSort(Builder $query): void
     {
         if (! Schema::hasTable('order_items')) {
-            $query->orderByDesc('published_at');
+            $query->orderByDesc('published_at')->orderByDesc('id');
 
             return;
         }
@@ -402,7 +414,7 @@ class ProductRepository
                 ->whereHas('order', fn ($order) => $order->holdingStock()),
         ])
             ->orderByDesc('units_sold')
-            ->orderByDesc('published_at');
+            ->orderByDesc('published_at')->orderByDesc('id');
     }
 
     /**
@@ -534,6 +546,9 @@ class ProductRepository
             ->whereNotIn('id', $siblings->modelKeys())
             ->inStock()
             ->orderByDesc('published_at')
+            // Products published in the same second, from a seeder or a
+            // bulk publish, would otherwise come back in any order.
+            ->orderByDesc('id')
             ->limit($limit - $siblings->count())
             ->get();
 
