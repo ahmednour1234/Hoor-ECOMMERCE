@@ -77,7 +77,58 @@
             </x-slot:action>
         </x-admin.empty-state>
     @else
+        {{--
+            Bulk status changes.
+
+            The whole table is one form: the checkboxes are its fields and the
+            bar is its submit. Alpine only counts what is ticked, so with
+            JavaScript off the checkboxes and the buttons still work — they
+            simply always show.
+        --}}
+        <form method="POST" action="{{ route('admin.products.bulk') }}"
+              x-data="{
+                  selected: [],
+                  get count() { return this.selected.length },
+              }">
+            @csrf
+            @method('PATCH')
+
+            {{-- Sticky, so a long list does not mean scrolling back up to act
+                 on what was ticked at the bottom. --}}
+            <div x-show="count > 0" x-cloak
+                 x-transition:enter="transition ease-hoor duration-200"
+                 x-transition:enter-start="-translate-y-2 opacity-0"
+                 x-transition:enter-end="translate-y-0 opacity-100"
+                 class="sticky top-4 z-20 mb-4 flex flex-wrap items-center gap-3 rounded-md
+                        bg-hoor-navy-500 px-4 py-3 shadow-card">
+
+                <span class="text-sm font-medium text-hoor-cream-50"
+                      x-text="count + ' ' + @js(__('catalog.products.bulk_selected', ['count' => '']))"></span>
+
+                <span class="text-sm text-hoor-cream-50/60">
+                    {{ __('catalog.products.bulk_action') }}
+                </span>
+
+                <div class="flex flex-wrap gap-2">
+                    @foreach ($statuses as $value => $label)
+                        <button type="submit" name="action" value="{{ $value }}"
+                                class="rounded-sm bg-white/10 px-3 py-1.5 text-sm font-medium
+                                       text-hoor-cream-50 transition hover:bg-white/20
+                                       focus-visible:outline focus-visible:outline-2
+                                       focus-visible:outline-offset-2 focus-visible:outline-hoor-gold-500">
+                            {{ $label }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <button type="button" x-on:click="selected = []"
+                        class="ms-auto text-sm text-hoor-cream-50/70 transition hover:text-hoor-cream-50">
+                    {{ __('common.actions.cancel') }}
+                </button>
+            </div>
+
         <x-admin.table :headings="[
+            '',
             '',
             __('catalog.fields.name_en'),
             __('catalog.fields.category'),
@@ -88,6 +139,14 @@
         ]">
             @foreach ($products as $product)
                 <tr class="transition hover:bg-hoor-cream-100/50">
+                    <td class="ps-4">
+                        <input type="checkbox" name="products[]" value="{{ $product->id }}"
+                               x-model="selected"
+                               class="rounded border-hoor-cream-300 text-hoor-navy-500
+                                      focus:ring-hoor-denim-500"
+                               aria-label="{{ __('catalog.products.select_one') }}">
+                    </td>
+
                     {{-- Thumbnail --}}
                     <td class="px-4 py-3">
                         <div class="h-12 w-12 overflow-hidden rounded-sm border border-hoor-cream-300 bg-hoor-cream-100">
@@ -171,6 +230,7 @@
                 </tr>
             @endforeach
         </x-admin.table>
+        </form>
 
         <div class="mt-6">{{ $products->links() }}</div>
     @endif

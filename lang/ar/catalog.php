@@ -43,6 +43,12 @@ return [
     ],
 
     'products' => [
+        'bulk_done'     => 'تم تغيير حالة :count منتج إلى :status.',
+        'bulk_apply'    => 'تطبيق',
+        'bulk_selected' => 'تم اختيار :count',
+        'bulk_action'   => 'تغيير الحالة إلى',
+        'select_all'    => 'اختيار الكل',
+        'select_one'    => 'اختيار هذا المنتج',
         'title'          => 'المنتجات',
         'subtitle'       => 'إدارة كتالوج حور والمخزون والأسعار.',
         'create'         => 'إضافة منتج',

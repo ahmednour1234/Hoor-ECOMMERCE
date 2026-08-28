@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductBulkController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImportController;
 use App\Http\Controllers\Admin\ReturnController;
@@ -76,6 +77,9 @@ Route::prefix('admin')
             Route::get('template', 'template')->name('template');
             Route::post('/', 'store')->name('store');
         });
+
+        // Publishing a batch after an import, which lands products as drafts.
+        Route::patch('products/bulk', [ProductBulkController::class, 'update'])->name('products.bulk');
 
         Route::resource('products', ProductController::class)->except('show');
         Route::resource('categories', CategoryController::class)->except('show');

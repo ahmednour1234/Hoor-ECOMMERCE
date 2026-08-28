@@ -43,6 +43,12 @@ return [
     ],
 
     'products' => [
+        'bulk_done'     => ':count products set to :status.',
+        'bulk_apply'    => 'Apply',
+        'bulk_selected' => ':count selected',
+        'bulk_action'   => 'Set status to',
+        'select_all'    => 'Select all',
+        'select_one'    => 'Select this product',
         'title'        => 'Products',
         'subtitle'     => 'Manage the HOOR catalog, stock and pricing.',
         'create'       => 'Add product',
