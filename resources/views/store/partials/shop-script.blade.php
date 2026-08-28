@@ -12,9 +12,129 @@
         return {
             loading: false,
 
+            // Appending the next page rather than replacing the grid. Distinct
+            // from `loading`, which dims the results during a filter change —
+            // the two must not block each other's spinner.
+            appending: false,
+
+            // Only taken over from the numbered pager once we know the browser
+            // can actually drive it. Without IntersectionObserver the real
+            // links stay on screen rather than leaving no way forward.
+            infinite: false,
+
+            nextUrl: null,
+            loadedCount: 0,
+            totalCount: 0,
+
+            observer: null,
+
             init() {
                 // The back and forward buttons must reload the matching view.
                 window.addEventListener('popstate', () => this.load(window.location.href, false));
+
+                this.infinite = 'IntersectionObserver' in window;
+
+                this.readPager();
+                this.$nextTick(() => this.watchSentinel());
+            },
+
+            /**
+             * Take the paging state from the markup the server just rendered.
+             *
+             * The server is the only authority on what page comes next and how
+             * many results there are, so it is re-read after every swap rather
+             * than tracked in JavaScript and allowed to drift.
+             */
+            readPager() {
+                const pager = document.getElementById('shop-pager');
+
+                this.nextUrl     = pager?.dataset.next || null;
+                this.loadedCount = Number(pager?.dataset.loaded ?? 0);
+                this.totalCount  = Number(pager?.dataset.total ?? 0);
+            },
+
+            /**
+             * Watch the sentinel at the foot of the results.
+             *
+             * Re-attached after every swap: filtering replaces the pager's
+             * innerHTML, which throws away the element the previous observer
+             * was watching.
+             */
+            watchSentinel() {
+                if (! this.infinite) return;
+
+                this.observer?.disconnect();
+
+                const sentinel = this.$refs.sentinel;
+
+                if (! sentinel) return;
+
+                this.observer = new IntersectionObserver(
+                    entries => entries[0].isIntersecting && this.appendNext(),
+                    // Start fetching before the customer reaches the bottom, so
+                    // the next row is usually there by the time they arrive.
+                    { rootMargin: '600px 0px' },
+                );
+
+                this.observer.observe(sentinel);
+            },
+
+            /**
+             * Fetch the next page and add it below what is already shown.
+             */
+            async appendNext() {
+                // `loading` is checked too: a filter change in flight is about
+                // to replace this grid, so appending to it would be wasted.
+                if (this.appending || this.loading || ! this.nextUrl) return;
+
+                this.appending = true;
+
+                const url = this.nextUrl;
+
+                // Cleared up front so a second crossing of the sentinel cannot
+                // request the same page twice.
+                this.nextUrl = null;
+
+                try {
+                    const response = await fetch(url, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    });
+
+                    if (! response.ok) throw new Error(response.status);
+
+                    const doc = new DOMParser()
+                        .parseFromString(await response.text(), 'text/html');
+
+                    const incoming = doc.getElementById('shop-grid');
+                    const grid     = document.getElementById('shop-grid');
+
+                    if (! incoming || ! grid) throw new Error('missing grid');
+
+                    const added = incoming.children.length;
+
+                    grid.append(...incoming.children);
+
+                    // The address bar follows the results, so a reload or a
+                    // shared link lands where the customer actually is.
+                    history.replaceState({}, '', url);
+
+                    const pager = document.getElementById('shop-pager');
+                    const next  = doc.getElementById('shop-pager');
+
+                    if (pager && next) {
+                        pager.dataset.next   = next.dataset.next || '';
+                        pager.dataset.loaded = String(this.loadedCount + added);
+                    }
+
+                    this.loadedCount += added;
+                    this.nextUrl = next?.dataset.next || null;
+                } catch {
+                    // Put the button back rather than stranding the customer at
+                    // a dead end; the numbered pager is hidden behind it.
+                    this.nextUrl = url;
+                } finally {
+                    this.appending = false;
+                }
             },
 
             /**
@@ -79,6 +199,11 @@
                     }
 
                     document.title = doc.title;
+
+                    // The swap replaced the pager and the sentinel with fresh
+                    // elements, so both the state and the observer are stale.
+                    this.readPager();
+                    this.$nextTick(() => this.watchSentinel());
 
                     if (push) {
                         history.pushState({}, '', url);

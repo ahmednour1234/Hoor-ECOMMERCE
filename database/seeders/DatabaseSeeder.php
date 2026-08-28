@@ -25,6 +25,10 @@ class DatabaseSeeder extends Seeder
             ColorLibrarySeeder::class,
 
             CategorySeeder::class,
+
+            // The wider tree, so a spreadsheet naming "Denim Shirts" or
+            // "Abayas" finds it rather than being refused.
+            CategoryLibrarySeeder::class,
             ProductSeeder::class,
             SettingsSeeder::class,
             FaqSeeder::class,

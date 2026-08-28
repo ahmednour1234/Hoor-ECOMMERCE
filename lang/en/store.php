@@ -134,6 +134,10 @@ return [
         'none'         => 'No products match these filters.',
         'none_hint'    => 'Try removing a filter or two.',
         'active'       => 'Active filters',
+        'load_more'    => 'Load more',
+        'loading'      => 'Loading…',
+        'all_loaded'   => "That's everything.",
+        'showing'      => 'Showing :count of :total',
 
         'facets' => [
             'category'     => 'Category',

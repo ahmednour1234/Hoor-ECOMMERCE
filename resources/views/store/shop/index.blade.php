@@ -107,13 +107,63 @@
                         </x-slot:action>
                     </x-admin.empty-state>
                 @else
-                    <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-3">
+                    {{-- Appended to as the customer scrolls, so it is kept
+                         separate from the pager below it. --}}
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-3"
+                         id="shop-grid">
                         @foreach ($products as $index => $product)
-                            <x-store.product-card :product="$product" :eager="$index < 3" />
+                            <x-store.product-card :product="$product"
+                                                  :eager="$index < 3 && $products->onFirstPage()" />
                         @endforeach
                     </div>
 
-                    <div class="mt-10">{{ $products->links() }}</div>
+                    {{--
+                        The pager stays in the markup and stays a real link, so
+                        the shop still works with JavaScript off and a crawler
+                        can still walk every page. With JavaScript on it is
+                        hidden and the sentinel below drives loading instead.
+                    --}}
+                    <div class="mt-10" id="shop-pager"
+                         data-next="{{ $products->nextPageUrl() }}"
+                         data-loaded="{{ $products->count() }}"
+                         data-total="{{ $products->total() }}">
+
+                        <div x-show="!infinite" x-cloak>{{ $products->links() }}</div>
+
+                        <div x-show="infinite" x-cloak class="flex flex-col items-center gap-4">
+                            {{-- Crossed when this scrolls into view. --}}
+                            <div x-ref="sentinel" class="h-px w-full"></div>
+
+                            <template x-if="appending">
+                                <div class="flex items-center gap-2 text-sm text-hoor-muted">
+                                    <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"
+                                         aria-hidden="true">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                stroke="currentColor" stroke-width="3" />
+                                        <path class="opacity-75" fill="currentColor"
+                                              d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z" />
+                                    </svg>
+                                    {{ __('store.shop.loading') }}
+                                </div>
+                            </template>
+
+                            {{-- The button is the fallback for anyone the
+                                 observer cannot serve, and the retry after a
+                                 failed fetch. --}}
+                            <button type="button"
+                                    x-show="nextUrl && !appending"
+                                    @click="appendNext()"
+                                    class="btn-outline">
+                                {{ __('store.shop.load_more') }}
+                            </button>
+
+                            <p class="text-sm text-hoor-muted"
+                               x-text="nextUrl
+                                   ? @js(__('store.shop.showing', ['count' => ':count', 'total' => ':total']))
+                                       .replace(':count', loadedCount).replace(':total', totalCount)
+                                   : @js(__('store.shop.all_loaded'))"></p>
+                        </div>
+                    </div>
                 @endif
                 </div>
             </div>
