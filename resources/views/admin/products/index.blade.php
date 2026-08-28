@@ -80,18 +80,26 @@
         {{--
             Bulk status changes.
 
-            The whole table is one form: the checkboxes are its fields and the
-            bar is its submit. Alpine only counts what is ticked, so with
-            JavaScript off the checkboxes and the buttons still work — they
-            simply always show.
+            The form wraps nothing.
+
+            Wrapping the table put each row's delete form inside this one, and
+            nested forms are invalid HTML: the browser discards the inner form
+            and the submit falls through to the outer one — which sent a GET to
+            a PATCH-only route.
+
+            So the checkboxes join this form through the HTML5 `form`
+            attribute instead. A field may belong to a form it does not sit
+            inside, and the delete forms stay independent.
         --}}
-        <form method="POST" action="{{ route('admin.products.bulk') }}"
-              x-data="{
-                  selected: [],
-                  get count() { return this.selected.length },
-              }">
+        <form method="POST" action="{{ route('admin.products.bulk') }}" id="bulk-status">
             @csrf
             @method('PATCH')
+        </form>
+
+        <div x-data="{
+                 selected: [],
+                 get count() { return this.selected.length },
+             }">
 
             {{-- Sticky, so a long list does not mean scrolling back up to act
                  on what was ticked at the bottom. --}}
@@ -112,6 +120,7 @@
                 <div class="flex flex-wrap gap-2">
                     @foreach ($statuses as $value => $label)
                         <button type="submit" name="action" value="{{ $value }}"
+                                form="bulk-status"
                                 class="rounded-sm bg-white/10 px-3 py-1.5 text-sm font-medium
                                        text-hoor-cream-50 transition hover:bg-white/20
                                        focus-visible:outline focus-visible:outline-2
@@ -141,6 +150,7 @@
                 <tr class="transition hover:bg-hoor-cream-100/50">
                     <td class="ps-4">
                         <input type="checkbox" name="products[]" value="{{ $product->id }}"
+                               form="bulk-status"
                                x-model="selected"
                                class="rounded border-hoor-cream-300 text-hoor-navy-500
                                       focus:ring-hoor-denim-500"
@@ -230,7 +240,7 @@
                 </tr>
             @endforeach
         </x-admin.table>
-        </form>
+        </div>
 
         <div class="mt-6">{{ $products->links() }}</div>
     @endif
