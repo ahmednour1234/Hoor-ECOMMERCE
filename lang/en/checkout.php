@@ -94,6 +94,11 @@ return [
         'notes'          => 'notes',
     ],
     'welcome_offer' => [
+        'eyebrow'         => 'Welcome offer',
+        'off_this_order'  => 'off this order',
+        'modal_title'     => 'Sign in and save',
+        'modal_body'      => 'Continue with Google and the discount is applied automatically — no code to type, and checkout is faster next time.',
+        'decline'         => 'No thanks, continue as guest',
         'title'   => 'Save :percent% on this order',
         'body'    => 'Sign in with Google and we will take :percent% off — it is applied automatically, no code to type.',
         'saving'  => 'You save :amount',

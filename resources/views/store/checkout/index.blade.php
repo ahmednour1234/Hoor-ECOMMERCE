@@ -29,8 +29,13 @@
             <div class="min-w-0 flex-1 space-y-8">
 
                 {{-- The welcome discount, for a guest who has not had it.
-                     Renders nothing when it does not apply. --}}
+                     Renders nothing when it does not apply.
+
+                     Both a dialog and a banner: the dialog appears once and is
+                     dismissible, the banner stays for a customer who closed it
+                     and changed her mind. --}}
                 @isset($offer)
+                    <x-store.welcome-offer-modal :offer="$offer" :saving="$offerSaving" />
                     <x-store.welcome-offer :offer="$offer" :saving="$offerSaving" />
                 @endisset
 

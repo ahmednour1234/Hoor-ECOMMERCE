@@ -342,6 +342,54 @@ class WelcomeOfferTest extends TestCase
         $method->invoke($controller, $user);
     }
 
+    // -------------------------------------------------------------- The dialog
+
+    public function test_the_dialog_is_shown_to_a_guest(): void
+    {
+        $this->fillCart();
+
+        $this->get(route('store.checkout.index', ['locale' => 'en']))
+            ->assertOk()
+            ->assertSee(__('checkout.welcome_offer.modal_title'))
+            ->assertSee('welcomeOfferModal', escape: false);
+    }
+
+    /**
+     * The dialog appears once and can be dismissed; the banner stays for a
+     * customer who closed it and changed her mind.
+     */
+    public function test_the_banner_and_the_dialog_both_render(): void
+    {
+        $this->fillCart();
+
+        $html = $this->get(route('store.checkout.index', ['locale' => 'en']))->assertOk()->getContent();
+
+        $this->assertStringContainsString(__('checkout.welcome_offer.modal_title'), $html);
+        $this->assertStringContainsString(__('checkout.welcome_offer.title', ['percent' => 5]), $html);
+    }
+
+    /**
+     * Declining has to be as available as accepting.
+     */
+    public function test_the_dialog_offers_a_way_out(): void
+    {
+        $this->fillCart();
+
+        $this->get(route('store.checkout.index', ['locale' => 'en']))
+            ->assertOk()
+            ->assertSee(__('checkout.welcome_offer.decline'));
+    }
+
+    public function test_no_dialog_for_a_signed_in_customer(): void
+    {
+        $this->fillCart();
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('store.checkout.index', ['locale' => 'en']))
+            ->assertOk()
+            ->assertDontSee(__('checkout.welcome_offer.modal_title'));
+    }
+
     public function test_the_offer_renders_in_both_locales(): void
     {
         $this->fillCart();
