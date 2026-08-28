@@ -104,4 +104,20 @@ return [
         'window_days'          => (int) env('HOOR_RETURN_WINDOW_DAYS', 14),
         'max_open_per_order'   => (int) env('HOOR_MAX_OPEN_RETURNS', 3),
     ],
+    /*
+    |--------------------------------------------------------------------------
+    | Welcome offer
+    |--------------------------------------------------------------------------
+    |
+    | The discount offered to a guest at checkout for signing in. The banner
+    | reads its terms from the coupon itself, so changing the campaign in the
+    | admin changes what the banner promises — the two cannot disagree.
+    |
+    | Blank the code to remove the banner entirely.
+    |
+    */
+
+    'welcome_offer' => [
+        'code' => env('HOOR_WELCOME_CODE', 'WELCOME5'),
+    ],
 ];

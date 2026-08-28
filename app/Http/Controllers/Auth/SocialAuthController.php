@@ -6,7 +6,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Exceptions\SocialAuthException;
 use App\Http\Controllers\Controller;
+use App\Services\CartService;
+use App\Services\CouponService;
 use App\Services\SocialAuthService;
+use App\Services\WelcomeOfferService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,8 +26,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class SocialAuthController extends Controller
 {
-    public function __construct(private readonly SocialAuthService $social)
-    {
+    public function __construct(
+        private readonly SocialAuthService $social,
+        private readonly WelcomeOfferService $welcome,
+        private readonly CouponService $coupons,
+        private readonly CartService $cart,
+    ) {
     }
 
     /**
@@ -81,9 +88,44 @@ class SocialAuthController extends Controller
         // after it.
         $request->session()->regenerate();
 
+        $applied = $this->applyWelcomeOffer($user);
+
         $intended = $request->session()->pull('social.intended');
 
-        return redirect()->to($intended ?: route('store.account.index'));
+        return redirect()
+            ->to($intended ?: route('store.account.index'))
+            ->with('status', $applied);
+    }
+
+    /**
+     * Put the welcome code on the basket, if she is entitled to it.
+     *
+     * Applied to the cart rather than granted outright, so the discount still
+     * goes through CouponService at checkout — validated server-side, recorded
+     * as a redemption, released if the order is cancelled. Nothing here is a
+     * shortcut around that.
+     *
+     * Returns the message to show her, or null if there was nothing to apply.
+     */
+    private function applyWelcomeOffer(\App\Models\User $user): ?string
+    {
+        // She has just signed in, so isAvailableTo() would say no — the
+        // question now is whether this account has already had one.
+        $coupon = $this->welcome->coupon();
+
+        if ($coupon === null || $this->coupons->customerHasUsed($coupon, null, $user->id)) {
+            return null;
+        }
+
+        // Only if she has not already entered a code of her own: replacing a
+        // code she chose would be taking a decision away from her.
+        if ($this->cart->couponCode() !== null) {
+            return null;
+        }
+
+        $this->cart->applyCoupon($coupon->code);
+
+        return __('checkout.welcome_offer.applied', ['percent' => $coupon->value]);
     }
 
     /**

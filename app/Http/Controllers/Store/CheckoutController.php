@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\ShippingService;
+use App\Services\WelcomeOfferService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -31,10 +32,11 @@ class CheckoutController extends Controller
         private readonly CartService $cart,
         private readonly CheckoutService $checkout,
         private readonly ShippingService $shipping,
+        private readonly WelcomeOfferService $welcome,
     ) {
     }
 
-    public function index(): View|RedirectResponse
+    public function index(Request $request): View|RedirectResponse
     {
         $cart = $this->cart->get();
 
@@ -48,11 +50,24 @@ class CheckoutController extends Controller
         // to remember and retype it here.
         $couponCode = $this->cart->couponCode();
 
+        /*
+         * The welcome offer, for a guest who has not had it before.
+         *
+         * Shown only when it genuinely applies: an offer that turns out not to
+         * work is worse than none, because she signs in expecting a saving and
+         * the total does not move.
+         */
+        $offer = $this->welcome->isAvailableTo($request->user())
+            ? $this->welcome->coupon()
+            : null;
+
         return view('store.checkout.index', [
             'cart'         => $cart,
             'governorates' => $this->shipping->deliverableGovernorates(),
             'summary'      => $this->checkout->summarise($cart, couponCode: $couponCode),
             'couponCode'   => $couponCode,
+            'offer'        => $offer,
+            'offerSaving'  => $offer ? $this->welcome->discountFor($cart) : 0,
         ]);
     }
 

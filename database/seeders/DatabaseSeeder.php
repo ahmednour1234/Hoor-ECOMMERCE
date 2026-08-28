@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             SettingsSeeder::class,
             FaqSeeder::class,
+            WelcomeCouponSeeder::class,
         ]);
     }
 }

@@ -128,6 +128,19 @@ class CouponService
     }
 
     /**
+     * Whether this customer has already had all the uses she is allowed.
+     *
+     * Public because the checkout banner needs the same answer: an offer shown
+     * to someone who has already taken it is a promise that breaks the moment
+     * she acts on it. Asking here rather than duplicating the rule means the
+     * banner and the discount cannot disagree.
+     */
+    public function customerHasUsed(Coupon $coupon, ?string $phone, ?int $userId = null): bool
+    {
+        return $this->customerIsDone($coupon, $phone, $userId);
+    }
+
+    /**
      * Whether a code would currently be accepted.
      */
     public function isValid(?string $code, Cart $cart, ?string $phone = null, ?int $userId = null): bool

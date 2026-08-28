@@ -28,6 +28,12 @@
 
             <div class="min-w-0 flex-1 space-y-8">
 
+                {{-- The welcome discount, for a guest who has not had it.
+                     Renders nothing when it does not apply. --}}
+                @isset($offer)
+                    <x-store.welcome-offer :offer="$offer" :saving="$offerSaving" />
+                @endisset
+
                 {{-- Contact --}}
                 <section class="card">
                     <div class="card-header">

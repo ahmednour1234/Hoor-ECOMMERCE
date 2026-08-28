@@ -93,4 +93,12 @@ return [
         'landmark'       => 'landmark',
         'notes'          => 'notes',
     ],
+    'welcome_offer' => [
+        'title'   => 'Save :percent% on this order',
+        'body'    => 'Sign in with Google and we will take :percent% off — it is applied automatically, no code to type.',
+        'saving'  => 'You save :amount',
+        'cta'     => 'Sign in with Google',
+        'applied' => 'Your :percent% welcome discount has been applied.',
+        'note'    => 'One welcome discount per customer.',
+    ],
 ];
