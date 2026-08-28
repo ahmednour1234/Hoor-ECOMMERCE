@@ -93,7 +93,6 @@
         --}}
         <form method="POST" action="{{ route('admin.products.bulk') }}" id="bulk-status">
             @csrf
-            @method('PATCH')
         </form>
 
         <div x-data="{

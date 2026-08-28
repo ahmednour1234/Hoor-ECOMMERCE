@@ -78,8 +78,16 @@ Route::prefix('admin')
             Route::post('/', 'store')->name('store');
         });
 
-        // Publishing a batch after an import, which lands products as drafts.
-        Route::patch('products/bulk', [ProductBulkController::class, 'update'])->name('products.bulk');
+        /*
+         * Publishing a batch after an import, which lands products as drafts.
+         *
+         * POST rather than PATCH deliberately. The form's fields are joined to
+         * it by the HTML5 `form` attribute — because wrapping the table would
+         * nest each row's delete form inside this one — and a method override
+         * depends on a hidden field travelling with them. A plain POST has one
+         * less thing to go wrong on the way to the server.
+         */
+        Route::post('products/bulk', [ProductBulkController::class, 'update'])->name('products.bulk');
 
         Route::resource('products', ProductController::class)->except('show');
         Route::resource('categories', CategoryController::class)->except('show');

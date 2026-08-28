@@ -34,7 +34,7 @@ class ProductBulkStatusTest extends TestCase
      */
     private function apply(array $ids, string $action): \Illuminate\Testing\TestResponse
     {
-        return $this->actingAs($this->admin)->patch(
+        return $this->actingAs($this->admin)->post(
             route('admin.products.bulk', ['locale' => 'en']),
             ['action' => $action, 'products' => $ids],
         );
@@ -140,7 +140,7 @@ class ProductBulkStatusTest extends TestCase
         $product = Product::factory()->draft()->create();
 
         $this->actingAs($customer)
-            ->patch(route('admin.products.bulk', ['locale' => 'en']), [
+            ->post(route('admin.products.bulk', ['locale' => 'en']), [
                 'action'   => 'published',
                 'products' => [$product->id],
             ])
