@@ -19,6 +19,11 @@ class DatabaseSeeder extends Seeder
             ShippingSeeder::class,
             SizeSeeder::class,
             ColorSeeder::class,
+
+            // The wider palette, so an import naming "Charcoal" or "Mocha"
+            // finds it rather than being refused.
+            ColorLibrarySeeder::class,
+
             CategorySeeder::class,
             ProductSeeder::class,
             SettingsSeeder::class,
