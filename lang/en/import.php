@@ -52,4 +52,14 @@ return [
     ],
 
     'imported_as_draft' => 'Imported products are saved as drafts, so you can review them before they appear in the shop.',
+
+    /*
+     * Exporting. Lives here rather than in catalog.php because the product
+     * export is the import's own format — the two are one round-trip.
+     */
+    'export' => [
+        'products'      => 'Export products',
+        'categories'    => 'Export categories',
+        'note'          => 'Downloads in the import format, so you can edit it and upload it back.',
+    ],
 ];

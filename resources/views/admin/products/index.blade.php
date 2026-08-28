@@ -6,6 +6,14 @@
         :title="__('catalog.products.title')"
         :subtitle="__('catalog.products.subtitle')">
         <x-slot:actions>
+            {{-- The export carries the filters currently on screen, so
+                 "export" means what the page is showing rather than always
+                 the whole catalogue. --}}
+            <x-ui.button variant="outline"
+                         :href="route('admin.products.export', request()->only('status', 'category_id'))">
+                {{ __('import.export.products') }}
+            </x-ui.button>
+
             <x-ui.button variant="outline" :href="route('admin.products.import.create')">
                 {{ __('import.title') }}
             </x-ui.button>

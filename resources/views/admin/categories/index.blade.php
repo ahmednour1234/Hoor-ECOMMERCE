@@ -6,6 +6,10 @@
         :title="__('catalog.categories.title')"
         :subtitle="__('catalog.categories.subtitle')">
         <x-slot:actions>
+            <x-ui.button variant="outline" :href="route('admin.categories.export')">
+                {{ __('import.export.categories') }}
+            </x-ui.button>
+
             <x-ui.button variant="primary" :href="route('admin.categories.create')">
                 {{ __('catalog.categories.create') }}
             </x-ui.button>

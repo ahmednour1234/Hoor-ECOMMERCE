@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductBulkController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CatalogExportController;
 use App\Http\Controllers\Admin\ProductImportController;
 use App\Http\Controllers\Admin\ReturnController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -77,6 +78,19 @@ Route::prefix('admin')
             Route::get('template', 'template')->name('template');
             Route::post('/', 'store')->name('store');
         });
+
+        /*
+         * Downloading the catalogue.
+         *
+         * Declared before both resources for the same reason as the import:
+         * "products/export" would otherwise be swallowed by {product} and
+         * looked up as a slug.
+         */
+        Route::get('products/export', [CatalogExportController::class, 'products'])
+            ->name('products.export');
+
+        Route::get('categories/export', [CatalogExportController::class, 'categories'])
+            ->name('categories.export');
 
         /*
          * Publishing a batch after an import, which lands products as drafts.
