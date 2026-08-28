@@ -35,6 +35,7 @@ class OrderAddress extends Model
         'governorate_id', 'governorate_name_ar', 'governorate_name_en',
         'area_id', 'area_name_ar', 'area_name_en',
         'address', 'landmark',
+        'latitude', 'longitude',
         'shipping_fee',
     ];
 

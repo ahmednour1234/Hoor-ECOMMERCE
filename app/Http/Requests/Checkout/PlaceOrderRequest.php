@@ -69,6 +69,17 @@ class PlaceOrderRequest extends FormRequest
 
             'address'  => ['required', 'string', 'min:10', 'max:500'],
             'landmark' => ['nullable', 'string', 'max:240'],
+
+            /*
+             * The pin, if she dropped one.
+             *
+             * Bounded to Egypt rather than the whole globe: the shop delivers
+             * nowhere else, so a coordinate outside it is either a spoofed
+             * payload or a browser reporting nonsense, and storing it would
+             * send a courier somewhere absurd.
+             */
+            'latitude'  => ['nullable', 'numeric', 'between:21.5,32.5', 'required_with:longitude'],
+            'longitude' => ['nullable', 'numeric', 'between:24.0,37.5', 'required_with:latitude'],
             'notes'    => ['nullable', 'string', 'max:1000'],
 
             'coupon_code' => ['nullable', 'string', 'max:64'],

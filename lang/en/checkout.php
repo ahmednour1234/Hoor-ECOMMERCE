@@ -101,4 +101,16 @@ return [
         'applied' => 'Your :percent% welcome discount has been applied.',
         'note'    => 'One welcome discount per customer.',
     ],
+    'location' => [
+        'use'         => 'Use my current location',
+        'again'       => 'Update my location',
+        'locating'    => 'Finding you…',
+        'saved'       => 'Location saved for the courier',
+        'check'       => 'Check it',
+        'hint'        => 'Optional — helps the courier find you faster.',
+        'denied'      => 'Your browser blocked the location request. Allow it and try again.',
+        'failed'      => 'We could not get your location. Please try again.',
+        'unsupported' => 'Your browser does not support this.',
+        'insecure'    => 'Location needs a secure connection (https).',
+    ],
 ];

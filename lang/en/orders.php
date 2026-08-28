@@ -67,6 +67,8 @@ return [
         'governorate'      => 'Governorate',
         'area'             => 'Area',
         'street'           => 'Street address',
+        'pin'          => 'Map pin',
+        'open_map'     => 'Open in Maps',
         'landmark'         => 'Landmark',
 
         'products'    => 'Products',

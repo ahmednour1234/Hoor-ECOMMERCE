@@ -36,6 +36,7 @@ class CustomerAddress extends Model
         'full_name', 'phone', 'phone_alt',
         'governorate_id', 'area_id',
         'address', 'landmark',
+        'latitude', 'longitude',
         'is_default',
     ];
 

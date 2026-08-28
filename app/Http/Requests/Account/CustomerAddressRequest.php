@@ -47,6 +47,10 @@ class CustomerAddressRequest extends FormRequest
             'address'  => ['required', 'string', 'max:500'],
             'landmark' => ['nullable', 'string', 'max:190'],
 
+            // Bounded to Egypt: see PlaceOrderRequest for why.
+            'latitude'  => ['nullable', 'numeric', 'between:21.5,32.5', 'required_with:longitude'],
+            'longitude' => ['nullable', 'numeric', 'between:24.0,37.5', 'required_with:latitude'],
+
             'is_default' => ['nullable', 'boolean'],
         ];
     }
@@ -105,6 +109,8 @@ class CustomerAddressRequest extends FormRequest
             'area_id'        => $this->input('area_id') ? (int) $this->input('area_id') : null,
             'address'        => (string) $this->input('address'),
             'landmark'       => $this->input('landmark') ?: null,
+            'latitude'       => $this->input('latitude') ?: null,
+            'longitude'      => $this->input('longitude') ?: null,
             'is_default'     => $this->boolean('is_default'),
         ];
     }

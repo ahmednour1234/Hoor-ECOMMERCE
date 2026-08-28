@@ -118,6 +118,11 @@
                                     :label="__('checkout.fields.landmark')"
                                     :hint="__('checkout.fields.landmark_hint')"
                                     :value="old('landmark')" class="sm:col-span-2" />
+
+                        {{-- A pin for the courier. Optional, and never a
+                             replacement for the written address. --}}
+                        <x-store.location-picker :latitude="old('latitude')"
+                                                 :longitude="old('longitude')" />
                     </div>
                 </section>
 

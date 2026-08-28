@@ -233,6 +233,11 @@ class CreateOrderAction
 
             'address'      => $details['address'],
             'landmark'     => $details['landmark'] ?? null,
+
+            // The pin she dropped, so the courier has a location as well as a
+            // description.
+            'latitude'     => $details['latitude'] ?? null,
+            'longitude'    => $details['longitude'] ?? null,
             'shipping_fee' => $shippingFee,
         ]);
     }

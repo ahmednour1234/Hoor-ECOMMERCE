@@ -250,6 +250,26 @@
                             <dd class="text-hoor-navy-700">{{ $order->address->landmark }}</dd>
                         </div>
                     @endif
+
+                    {{-- The pin the customer dropped, if she did. Opens in the
+                         staff member's own maps app, so the courier can be sent
+                         a location rather than only a description. --}}
+                    @if ($order->address?->latitude && $order->address?->longitude)
+                        <div>
+                            <dt class="text-xs text-hoor-muted">{{ __('orders.admin.pin') }}</dt>
+                            <dd>
+                                <a href="https://maps.google.com/?q={{ $order->address->latitude }},{{ $order->address->longitude }}"
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1.5 text-hoor-denim-600 transition hover:text-hoor-denim-700">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" />
+                                        <circle cx="12" cy="10" r="2.5" />
+                                    </svg>
+                                    {{ __('orders.admin.open_map') }}
+                                </a>
+                            </dd>
+                        </div>
+                    @endif
                 </dl>
             </x-admin.panel>
         </div>
