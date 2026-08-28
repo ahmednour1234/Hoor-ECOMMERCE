@@ -275,6 +275,73 @@ class WelcomeOfferTest extends TestCase
         $this->assertSame(0, $second->discount, 'The welcome discount should apply only once.');
     }
 
+    /**
+     * The promise the banner makes: sign in, and the code is on the basket.
+     *
+     * Without this the banner is a lie — she signs in expecting a saving and
+     * the total does not move.
+     */
+    public function test_signing_in_puts_the_code_on_the_basket(): void
+    {
+        $this->fillCart();
+
+        $this->assertNull(app(CartService::class)->couponCode());
+
+        $user = User::factory()->create();
+
+        // What the social callback does once she returns from Google.
+        $this->actingAs($user);
+        app(\App\Http\Controllers\Auth\SocialAuthController::class);
+
+        $this->applyOfferAsCallbackWould($user);
+
+        $this->assertSame('WELCOME5', app(CartService::class)->couponCode());
+    }
+
+    /**
+     * A code she chose herself is not replaced: that would be taking a
+     * decision away from her.
+     */
+    public function test_a_code_she_entered_herself_is_not_overwritten(): void
+    {
+        $this->fillCart();
+
+        Coupon::factory()->fixed(5000)->create(['code' => 'HERS']);
+        app(CartService::class)->applyCoupon('HERS');
+
+        $this->applyOfferAsCallbackWould(User::factory()->create());
+
+        $this->assertSame('HERS', app(CartService::class)->couponCode());
+    }
+
+    public function test_a_customer_who_already_used_it_gets_nothing_applied(): void
+    {
+        $this->fillCart();
+
+        $customer = User::factory()->create();
+
+        CouponRedemption::factory()->create([
+            'coupon_id' => Coupon::query()->code('WELCOME5')->value('id'),
+            'user_id'   => $customer->id,
+        ]);
+
+        $this->applyOfferAsCallbackWould($customer);
+
+        $this->assertNull(app(CartService::class)->couponCode());
+    }
+
+    /**
+     * Drive the private method the social callback calls, through the
+     * controller the container builds.
+     */
+    private function applyOfferAsCallbackWould(User $user): void
+    {
+        $controller = app(\App\Http\Controllers\Auth\SocialAuthController::class);
+
+        $method = new \ReflectionMethod($controller, 'applyWelcomeOffer');
+        $method->invoke($controller, $user);
+    }
+
     public function test_the_offer_renders_in_both_locales(): void
     {
         $this->fillCart();
