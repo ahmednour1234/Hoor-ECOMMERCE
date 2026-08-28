@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductImportController;
 use App\Http\Controllers\Admin\ReturnController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SizeController;
@@ -64,6 +65,18 @@ Route::prefix('admin')
         Route::patch('returns/{return}/decide', [ReturnController::class, 'decide'])->name('returns.decide');
 
         // `show` is omitted throughout: the edit screen is the detail view.
+        /*
+         * Bulk import.
+         *
+         * Declared before the resource so "products/import" is not swallowed
+         * by the {product} wildcard and read as a slug.
+         */
+        Route::controller(ProductImportController::class)->prefix('products/import')->name('products.import.')->group(function (): void {
+            Route::get('/', 'create')->name('create');
+            Route::get('template', 'template')->name('template');
+            Route::post('/', 'store')->name('store');
+        });
+
         Route::resource('products', ProductController::class)->except('show');
         Route::resource('categories', CategoryController::class)->except('show');
         Route::resource('colors', ColorController::class)->except('show');

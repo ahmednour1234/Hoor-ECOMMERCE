@@ -6,6 +6,10 @@
         :title="__('catalog.products.title')"
         :subtitle="__('catalog.products.subtitle')">
         <x-slot:actions>
+            <x-ui.button variant="outline" :href="route('admin.products.import.create')">
+                {{ __('import.title') }}
+            </x-ui.button>
+
             <x-ui.button variant="primary" :href="route('admin.products.create')">
                 {{ __('catalog.products.create') }}
             </x-ui.button>
