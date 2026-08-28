@@ -60,6 +60,9 @@ class CheckoutTest extends TestCase
         return array_merge([
             'full_name'      => 'Layla Hassan',
             'phone'          => '01012345678',
+            // Required since the confirmation email shipped: cash on delivery
+            // leaves the customer no other written record of her order.
+            'email'          => 'layla@example.com',
             'phone_alt'      => null,
             'governorate_id' => $this->governorate->id,
             'area_id'        => null,
@@ -383,7 +386,7 @@ class CheckoutTest extends TestCase
         $this->cart()->add($variant, 1);
 
         $this->post(route('store.checkout.store', ['locale' => 'en']), [])
-            ->assertSessionHasErrors(['full_name', 'phone', 'governorate_id', 'address']);
+            ->assertSessionHasErrors(['full_name', 'phone', 'email', 'governorate_id', 'address']);
     }
 
     public function test_egyptian_phone_numbers_are_enforced(): void

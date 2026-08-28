@@ -18,6 +18,8 @@ return [
         'full_name'      => 'Full name',
         'phone'          => 'Phone number',
         'phone_hint'     => 'The courier will call this number.',
+        'email'          => 'Email address',
+        'email_hint'     => 'We send your order confirmation here. No account needed.',
         'phone_alt'      => 'Second phone (optional)',
         'phone_alt_hint' => 'Used if we cannot reach the first.',
         'governorate'    => 'Governorate',
@@ -83,6 +85,7 @@ return [
     'attributes' => [
         'full_name'      => 'full name',
         'phone'          => 'phone number',
+        'email'          => 'email address',
         'phone_alt'      => 'second phone',
         'governorate_id' => 'governorate',
         'area_id'        => 'area',

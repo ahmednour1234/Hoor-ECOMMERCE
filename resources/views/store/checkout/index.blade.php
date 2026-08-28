@@ -47,6 +47,16 @@
                                     :value="old('phone', auth()->user()?->phone)"
                                     autocomplete="tel" placeholder="01xxxxxxxxx" required />
 
+                        {{-- Required, guest or not: cash on delivery leaves
+                             nothing in writing, so the confirmation email is
+                             the customer's only record of the order and the
+                             only place its number is written down. --}}
+                        <x-ui.input name="email" type="email" dir="ltr"
+                                    :label="__('checkout.fields.email')"
+                                    :hint="__('checkout.fields.email_hint')"
+                                    :value="old('email', auth()->user()?->email)"
+                                    autocomplete="email" placeholder="you@example.com" required />
+
                         <x-ui.input name="phone_alt" type="tel" inputmode="numeric" dir="ltr"
                                     :label="__('checkout.fields.phone_alt')"
                                     :hint="__('checkout.fields.phone_alt_hint')"

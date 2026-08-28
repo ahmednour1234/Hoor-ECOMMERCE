@@ -219,6 +219,10 @@ class CreateOrderAction
             'phone'     => $details['phone'],
             'phone_alt' => $details['phone_alt'] ?? null,
 
+            // Snapshotted like everything else on the address: where the
+            // confirmation went is part of the record of the order.
+            'email'     => $details['email'] ?? null,
+
             'governorate_id'      => $governorate->id,
             'governorate_name_ar' => $governorate->name_ar,
             'governorate_name_en' => $governorate->name_en,

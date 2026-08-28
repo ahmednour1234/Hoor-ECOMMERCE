@@ -39,6 +39,21 @@ class PlaceOrderRequest extends FormRequest
              * numbers they cannot dial.
              */
             'phone'     => ['required', 'string', 'regex:/^01[0125][0-9]{8}$/'],
+
+            /*
+             * Required, including for guests.
+             *
+             * Cash on delivery leaves the customer with nothing in writing: no
+             * card statement, no payment receipt. The confirmation email is
+             * the only record she has of what she ordered and what it cost,
+             * and the only place her order number is written down — which is
+             * half of what the tracking page asks for.
+             */
+            // Format only, no DNS lookup: the dns rule costs ~87ms on every
+            // checkout attempt and fails outright when DNS is unreachable,
+            // which is too much to put on the path to an order for a typo it
+            // would rarely catch.
+            'email'     => ['required', 'email:rfc', 'max:190'],
             'phone_alt' => ['nullable', 'string', 'regex:/^01[0125][0-9]{8}$/', 'different:phone'],
 
             'governorate_id' => [
@@ -105,6 +120,7 @@ class PlaceOrderRequest extends FormRequest
             // Arabic-Indic digits are common on Egyptian keyboards; normalise
             // them so a valid number is not rejected for being typed ٠١٢.
             'phone'     => $this->normalisePhone($this->input('phone')),
+            'email'     => strtolower(trim((string) $this->input('email'))),
             'phone_alt' => $this->normalisePhone($this->input('phone_alt')),
             'area_id'   => $this->input('area_id') ?: null,
         ]);

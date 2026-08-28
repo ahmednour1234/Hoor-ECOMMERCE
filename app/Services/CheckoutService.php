@@ -9,8 +9,11 @@ use App\Exceptions\CartChangedException;
 use App\Exceptions\InsufficientStockException;
 use App\Models\Area;
 use App\Models\Governorate;
+use App\Mail\OrderPlaced;
 use App\Models\Order;
 use App\Support\Cart\Cart;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Places orders.
@@ -142,7 +145,41 @@ class CheckoutService
         // Only now, with the order committed and stock consumed.
         $this->cart->clear();
 
+        $this->sendConfirmation($order);
+
         return $order;
+    }
+
+    /**
+     * Email the customer her confirmation.
+     *
+     * Cash on delivery leaves nothing in writing, so for a guest this is the
+     * only record of the order and the only place its number appears — which
+     * is half of what the tracking page asks for.
+     *
+     * Failure is swallowed deliberately. The order exists, stock is consumed
+     * and the customer has already seen the success page; throwing here would
+     * turn a mail-server hiccup into an apparent checkout failure for an order
+     * that in fact went through. It is logged instead, so the shop can see it.
+     */
+    private function sendConfirmation(Order $order): void
+    {
+        $email = $order->address?->email;
+
+        if (blank($email)) {
+            return;
+        }
+
+        try {
+            Mail::to($email)
+                ->locale(app()->getLocale())
+                ->send(new OrderPlaced($order));
+        } catch (\Throwable $e) {
+            Log::warning('Order confirmation email failed', [
+                'order' => $order->number,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
