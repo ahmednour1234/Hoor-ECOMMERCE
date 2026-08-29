@@ -31,6 +31,22 @@ class HeroSlideRequest extends FormRequest
                 'max:'.config('hoor.media.max_upload', 4096),
             ],
 
+            /*
+             * The Arabic plate. Always optional, including on create: a shop
+             * with one photograph should be able to put a slide up, and the
+             * hero falls back to it for both directions.
+             */
+            'image_rtl' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:'.config('hoor.media.max_upload', 4096),
+            ],
+
+            // Ticked to drop the Arabic plate and go back to using the main
+            // photograph for both directions.
+            'remove_image_rtl' => ['nullable', 'boolean'],
+
             'backdrop' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
 
             'eyebrow_ar'     => ['nullable', 'string', 'max:120'],
@@ -84,6 +100,7 @@ class HeroSlideRequest extends FormRequest
     {
         return [
             'image'       => __('content.slides.image'),
+            'image_rtl'   => __('content.slides.image_rtl'),
             'backdrop'    => __('content.slides.backdrop'),
             'headline_ar' => __('content.slides.headline'),
             'headline_en' => __('content.slides.headline'),

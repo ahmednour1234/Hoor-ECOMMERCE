@@ -50,6 +50,12 @@ class HeroSlideController extends Controller
 
         HeroSlide::create($request->slideData() + [
             'image_path' => $this->images->store($request->file('image'), self::DIRECTORY),
+
+            // Optional even on create: a shop with one photograph gets a
+            // working slide, and the hero uses it for both directions.
+            'image_path_rtl' => $request->hasFile('image_rtl')
+                ? $this->images->store($request->file('image_rtl'), self::DIRECTORY)
+                : null,
         ]);
 
         $this->content->flush();
@@ -82,6 +88,20 @@ class HeroSlideController extends Controller
             $this->images->deleteAfterCommit($previous);
         }
 
+        if ($request->hasFile('image_rtl')) {
+            $previous = $slide->image_path_rtl;
+
+            $data['image_path_rtl'] = $this->images->store($request->file('image_rtl'), self::DIRECTORY);
+
+            $this->images->deleteAfterCommit($previous);
+        } elseif ($request->boolean('remove_image_rtl')) {
+            // Dropping the Arabic plate deliberately: the hero falls back to
+            // the main photograph for both directions.
+            $this->images->deleteAfterCommit($slide->image_path_rtl);
+
+            $data['image_path_rtl'] = null;
+        }
+
         $slide->update($data);
 
         $this->content->flush();
@@ -96,6 +116,7 @@ class HeroSlideController extends Controller
         $this->authorize('manage', \App\Models\Setting::class);
 
         $this->images->deleteAfterCommit($slide->image_path);
+        $this->images->deleteAfterCommit($slide->image_path_rtl);
 
         $slide->delete();
 

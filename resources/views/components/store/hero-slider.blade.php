@@ -28,18 +28,31 @@
     $rtl = \App\Support\Locale::direction() === 'rtl';
 
     /*
-     * Each plate has a right-handed twin for Arabic. An admin-uploaded slide
-     * has no twin, so it falls back to the one image it has — better a
-     * left-composed photograph than a broken one.
+     * Each plate has a right-handed twin for Arabic.
+     *
+     * Three ways to find one, in order of how much they can be trusted:
+     *
+     *   1. The slide names it. An admin uploaded a second photograph composed
+     *      for Arabic, and that is the whole answer.
+     *   2. The filename convention, hero-1.jpg beside hero-1-rtl.jpg. Only the
+     *      seeded brand plates follow it.
+     *   3. Its own image. A left-composed photograph in the Arabic hero is
+     *      wrong, but a broken one is worse.
      */
     $slides = array_map(static function (array $slide) use ($disk): array {
+        // An uploaded twin is taken as given and never second-guessed by the
+        // convention below — that lookup would overwrite it with the English
+        // plate whenever the names did not happen to match.
+        if (filled($slide['image_rtl'] ?? null)) {
+            return $slide;
+        }
+
         // The dot is inside the capture, so it is restored with it —
         // '-rtl$1' alone produced 'hero-1-rtljpg' and silently missed.
         $twin = preg_replace('/(\.(?:jpg|jpeg|png|webp))$/i', '-rtl$1', $slide['image']);
 
-        // Checked rather than assumed: a slide uploaded through the admin has
-        // no twin, and a src pointing at a file that is not there would render
-        // a broken image where the hero should be.
+        // Checked rather than assumed: a src pointing at a file that is not
+        // there would render a broken image where the hero should be.
         $slide['image_rtl'] = $disk->exists($twin) ? $twin : $slide['image'];
 
         return $slide;

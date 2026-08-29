@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
  *
  * @property int $id
  * @property string $image_path
+ * @property string|null $image_path_rtl
  * @property string|null $backdrop
  * @property int $position
  * @property bool $is_active
@@ -33,7 +34,7 @@ class HeroSlide extends Model
     use HasTranslations;
 
     protected $fillable = [
-        'image_path', 'backdrop',
+        'image_path', 'image_path_rtl', 'backdrop',
         'eyebrow_ar', 'eyebrow_en',
         'headline_ar', 'headline_en',
         'subheadline_ar', 'subheadline_en',
@@ -80,6 +81,27 @@ class HeroSlide extends Model
     }
 
     /**
+     * The public URL of the Arabic photograph.
+     *
+     * Falls back to the main image when no twin was uploaded: a
+     * left-composed photograph in the Arabic hero is wrong, but a broken
+     * image is worse.
+     */
+    public function imageUrlRtl(): string
+    {
+        return Storage::disk(config('hoor.media.disk'))
+            ->url($this->image_path_rtl ?: $this->image_path);
+    }
+
+    /**
+     * Whether this slide has a photograph composed for Arabic.
+     */
+    public function hasRtlImage(): bool
+    {
+        return filled($this->image_path_rtl);
+    }
+
+    /**
      * The slide as the hero component expects it.
      *
      * Keeps the component's shape stable whether slides come from the database
@@ -91,6 +113,17 @@ class HeroSlide extends Model
     {
         return [
             'image'       => $this->image_path,
+
+            /*
+             * The Arabic plate, passed explicitly rather than left for the
+             * component to guess from the filename. That convention only the
+             * seeded brand plates follow, so an uploaded slide never had a
+             * twin and the Arabic hero put the model under the words.
+             *
+             * Null when none was uploaded; the component falls back to the
+             * one image the slide has.
+             */
+            'image_rtl'   => $this->image_path_rtl,
             'backdrop'    => $this->backdrop,
             'eyebrow'     => $this->eyebrow,
             'headline'    => $this->headline,

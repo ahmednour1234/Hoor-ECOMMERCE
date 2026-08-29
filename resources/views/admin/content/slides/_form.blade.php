@@ -21,35 +21,101 @@
         <x-ui.alert variant="danger">{{ __('catalog.messages.has_errors') }}</x-ui.alert>
     @endif
 
-    @if ($slide)
-        {{--
-            The whole photograph, uncropped.
+    {{--
+        Two photographs, one per reading direction.
 
-            object-cover filled the 12:5 box by cutting the picture down, so an
-            admin checking what they had uploaded saw a version with the heads
-            missing and no way to tell whether the file or the frame was at
-            fault. object-contain shows the file as it is; the tinted ground
-            behind it makes the letterboxing read as the frame rather than as
-            part of the image.
-        --}}
-        <img src="{{ $slide->imageUrl() }}" alt=""
-             class="aspect-[12/5] w-full rounded-sm bg-hoor-cream-100 object-contain">
+        The hero puts the copy in the half the model does not occupy, and
+        direction decides which half that is. So Arabic needs its own plate
+        with the model on the other side — mirroring the English one would
+        reverse the jacket's buttons and placket and show a garment that does
+        not exist.
 
-        <p class="-mt-2 text-xs text-hoor-muted">{{ __('content.slides.preview_hint') }}</p>
-    @endif
+        The Arabic one is optional. Without it the hero uses the English
+        photograph for both directions, which is what every slide did before
+        this field existed.
+    --}}
+    <div class="grid gap-6 lg:grid-cols-2">
 
-    <div>
-        <label for="image" class="form-label">
-            {{ __('content.slides.image') }}
-            @unless ($slide) <span class="text-red-600">*</span> @endunless
-        </label>
+        {{-- English: model at the start edge, copy after her. --}}
+        <div class="space-y-3">
+            <p class="text-sm font-medium text-hoor-navy-700">
+                {{ __('content.slides.image_ltr_title') }}
+            </p>
 
-        <input type="file" name="image" id="image" accept="image/*" class="form-input">
+            @if ($slide)
+                {{--
+                    The whole photograph, uncropped.
 
-        <p class="form-hint">{{ __('content.slides.image_hint') }}</p>
+                    object-cover filled the box by cutting the picture down, so
+                    an admin checking their upload saw a version with the heads
+                    missing and no way to tell whether the file or the frame
+                    was at fault. object-contain shows the file as it is, and
+                    the tinted ground makes the letterboxing read as the frame
+                    rather than as part of the image.
+                --}}
+                <img src="{{ $slide->imageUrl() }}" alt=""
+                     class="aspect-[12/5] w-full rounded-sm bg-hoor-cream-100 object-contain">
+            @endif
 
-        @error('image')<p class="form-error">{{ $message }}</p>@enderror
+            <div>
+                <label for="image" class="form-label">
+                    {{ __('content.slides.image') }}
+                    @unless ($slide) <span class="text-red-600">*</span> @endunless
+                </label>
+
+                <input type="file" name="image" id="image" accept="image/*" class="form-input">
+
+                <p class="form-hint">{{ __('content.slides.image_hint') }}</p>
+
+                @error('image')<p class="form-error">{{ $message }}</p>@enderror
+            </div>
+        </div>
+
+        {{-- Arabic: model at the other edge, copy after her the other way. --}}
+        <div class="space-y-3" dir="rtl">
+            <p class="text-sm font-medium text-hoor-navy-700">
+                {{ __('content.slides.image_rtl_title') }}
+            </p>
+
+            @if ($slide)
+                @if ($slide->hasRtlImage())
+                    <img src="{{ $slide->imageUrlRtl() }}" alt=""
+                         class="aspect-[12/5] w-full rounded-sm bg-hoor-cream-100 object-contain">
+                @else
+                    {{-- What Arabic visitors see today: the English plate,
+                         with the model on the wrong side of the copy. --}}
+                    <div class="relative">
+                        <img src="{{ $slide->imageUrl() }}" alt=""
+                             class="aspect-[12/5] w-full rounded-sm bg-hoor-cream-100 object-contain opacity-40">
+
+                        <p class="absolute inset-0 flex items-center justify-center px-6 text-center
+                                  text-sm text-hoor-navy-600">
+                            {{ __('content.slides.image_rtl_missing') }}
+                        </p>
+                    </div>
+                @endif
+            @endif
+
+            <div>
+                <label for="image_rtl" class="form-label">{{ __('content.slides.image_rtl') }}</label>
+
+                <input type="file" name="image_rtl" id="image_rtl" accept="image/*" class="form-input">
+
+                <p class="form-hint">{{ __('content.slides.image_rtl_hint') }}</p>
+
+                @error('image_rtl')<p class="form-error">{{ $message }}</p>@enderror
+
+                @if ($slide?->hasRtlImage())
+                    <label class="mt-3 flex items-center gap-2 text-sm text-hoor-muted">
+                        <input type="checkbox" name="remove_image_rtl" value="1" class="form-checkbox">
+                        {{ __('content.slides.image_rtl_remove') }}
+                    </label>
+                @endif
+            </div>
+        </div>
     </div>
+
+    <p class="-mt-2 text-xs text-hoor-muted">{{ __('content.slides.preview_hint') }}</p>
 
     <div>
         <label for="backdrop" class="form-label">{{ __('content.slides.backdrop') }}</label>
