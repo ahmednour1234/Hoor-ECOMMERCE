@@ -37,6 +37,32 @@ class HeroFramingTest extends TestCase
         $this->assertStringContainsString('lg:h-auto', $html);
     }
 
+    public function test_the_declared_dimensions_match_the_plates(): void
+    {
+        $html = $this->hero();
+
+        /*
+         * The browser sizes the box from these before any CSS arrives. They
+         * said 1122x1402 — a portrait 0.80 left over from the studio crops the
+         * plates were composed from — so it reserved a tall slot for a wide
+         * photograph and the hero jumped as it settled.
+         */
+        $this->assertStringContainsString('width="2200" height="1100"', $html);
+
+        // Not asserted by absence: 1122x1402 is the product photograph's own
+        // shape and is correct on the cards further down the same page.
+        $hero = substr($html, (int) strpos($html, 'aria-roledescription="carousel"'), 4000);
+
+        $this->assertStringNotContainsString('width="1122"', $hero);
+    }
+
+    public function test_the_band_never_grows_taller_than_the_window(): void
+    {
+        // 2:1 grows without limit: at 1920px the band came out 960px tall,
+        // taller than the window, so the hero could not be seen in one go.
+        $this->assertStringContainsString('lg:max-h-[calc(100vh-8rem)]', $this->hero());
+    }
+
     public function test_the_photograph_is_never_trimmed_on_wide_screens(): void
     {
         $html = $this->hero();

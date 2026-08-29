@@ -99,8 +99,14 @@
         Below lg a 2:1 band would be far too short to hold the headline and the
         button — 187px on a phone — so those keep a height and accept the crop,
         which the leading-edge anchor already aims at the model.
+
+        The height is capped at the viewport because 2:1 grows without limit:
+        on a 1920px screen the band came out 960px tall, taller than the window,
+        so the hero could not be seen in one go and its composition read wrong.
+        Minus 8rem for the announcement bar and the header above it.
     --}}
-    <div class="relative h-[30rem] w-full sm:h-[32rem] md:h-[30rem] lg:h-auto lg:aspect-[2/1]">
+    <div class="relative h-[30rem] w-full sm:h-[32rem] md:h-[30rem]
+                lg:h-auto lg:aspect-[2/1] lg:max-h-[calc(100vh-8rem)]">
         @foreach ($slides as $index => $slide)
             <div x-show="active === {{ $index }}"
                  x-transition:enter="transition ease-hoor duration-700"
@@ -133,7 +139,16 @@
                 --}}
                 <img src="{{ $disk->url($rtl ? $slide['image_rtl'] : $slide['image']) }}"
                      alt=""
-                     width="1122" height="1402"
+                     {{--
+                         The plate's own shape, 2:1.
+
+                         These said 1122x1402 — a portrait 0.80, left over from
+                         the studio crops the plates were composed from. The
+                         browser sizes the box from these before any CSS
+                         arrives, so it reserved a tall portrait slot for a
+                         wide photograph and the hero jumped as it settled.
+                     --}}
+                     width="2200" height="1100"
                      loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
                      fetchpriority="{{ $index === 0 ? 'high' : 'auto' }}"
                      decoding="async"
