@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Models\HeroSlide;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -28,6 +29,10 @@ class LocaleAndAccessTest extends TestCase
 
     public function test_arabic_home_renders_rtl_and_translated_copy(): void
     {
+        // The headline asserted below is the hero's own default, shown for a
+        // slide that carries no copy of its own — so a slide has to exist.
+        HeroSlide::factory()->create(['is_active' => true, 'headline_ar' => null]);
+
         $this->get('/ar')
             ->assertOk()
             ->assertSee('dir="rtl"', escape: false)

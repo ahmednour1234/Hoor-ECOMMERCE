@@ -9,21 +9,26 @@
 @props(['slides' => null])
 
 @php
-    $disk = \Illuminate\Support\Facades\Storage::disk(config('hoor.media.disk'));
+    $slides = collect($slides ?? [])->all();
+@endphp
 
-    /*
-     * Falls back to the brand slides when the admin has configured none.
-     *
-     * These are wide 12:5 plates composed from the 4:5 studio portraits: the
-     * model sits toward the start edge with open ground after her, so the
-     * headline has clear space at every viewport width. Cropping the portraits
-     * directly would cut the garment out of frame.
-     */
-    $slides = $slides ?: [
-        ['image' => 'hero/hero-1.jpg', 'backdrop' => '#CAB296'],
-        ['image' => 'hero/hero-2.jpg', 'backdrop' => '#CCB49A'],
-        ['image' => 'hero/hero-3.jpg', 'backdrop' => '#DDCBB5'],
-    ];
+{{--
+    Nothing published, nothing rendered.
+
+    A set of brand plates used to stand in here when no slide was active. It
+    meant an admin who deactivated every slide still had three photographs on
+    the homepage that appeared nowhere in the admin and could not be changed —
+    the hero had stopped answering to the database.
+
+    The homepage has its own switch for the hero section, which is the visible
+    way to turn it off.
+--}}
+@if ($slides === [])
+    @php return; @endphp
+@endif
+
+@php
+    $disk = \Illuminate\Support\Facades\Storage::disk(config('hoor.media.disk'));
 
     $rtl = \App\Support\Locale::direction() === 'rtl';
 

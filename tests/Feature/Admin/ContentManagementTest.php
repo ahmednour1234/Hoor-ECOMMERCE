@@ -117,17 +117,29 @@ class ContentManagementTest extends TestCase
     }
 
     /**
-     * An admin who deactivates every slide should get the brand plates back,
-     * not a collapsed hero.
+     * The hero shows what the shop has published, and nothing else.
+     *
+     * There used to be a set of brand plates standing in here. It meant
+     * deactivating every slide put three photographs back on the homepage that
+     * appeared on no admin screen and could not be changed or removed — the
+     * hero had stopped answering to the database. The homepage's own switch
+     * for the hero section is the visible way to turn it off.
      */
-    public function test_deactivating_every_slide_falls_back_to_the_brand_plates(): void
+    public function test_deactivating_every_slide_empties_the_hero(): void
     {
         HeroSlide::factory()->count(2)->create(['is_active' => false]);
 
         app()->forgetInstance(ContentService::class);
-        $slides = app(ContentService::class)->heroSlides();
 
-        $this->assertNotEmpty($slides);
+        $this->assertSame([], app(ContentService::class)->heroSlides());
+    }
+
+    public function test_a_homepage_with_no_slides_renders_without_a_hero(): void
+    {
+        // The page must still be whole; only the hero is absent.
+        $this->get(route('store.home', ['locale' => 'en']))
+            ->assertOk()
+            ->assertDontSee('aria-roledescription="carousel"', false);
     }
 
     public function test_only_active_slides_are_shown_in_order(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Models\HeroSlide;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -44,6 +45,10 @@ class AdminLayoutRenderTest extends TestCase
 
     public function test_storefront_renders_header_footer_and_switcher(): void
     {
+        // The hero headline below is its default, shown for a slide carrying
+        // no copy of its own — so a slide has to exist for it to appear.
+        HeroSlide::factory()->create(['is_active' => true, 'headline_en' => null]);
+
         $this->get('/en')
             ->assertOk()
             ->assertSee(__('store.hero.headline'))

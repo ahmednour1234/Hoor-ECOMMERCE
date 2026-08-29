@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Store;
 
+use App\Models\HeroSlide;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,6 +20,21 @@ use Tests\TestCase;
 class HeroFramingTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        /*
+         * The hero renders only what the shop has published, so slides have to
+         * exist before there is any framing to assert.
+         *
+         * Two of them, because the arrows are drawn only when there is
+         * somewhere to go — one slide is a still photograph, not a slider.
+         */
+        HeroSlide::factory()->create(['is_active' => true, 'position' => 0]);
+        HeroSlide::factory()->create(['is_active' => true, 'position' => 1]);
+    }
 
     private function hero(string $locale = 'en'): string
     {

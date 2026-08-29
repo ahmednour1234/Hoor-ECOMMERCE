@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Store;
 
 use App\Models\Category;
+use App\Models\HeroSlide;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
@@ -24,6 +25,12 @@ class HomepageTest extends TestCase
 
         // The header caches its menu; a stale menu would leak between tests.
         Cache::flush();
+
+        // The hero shows what the shop has published and nothing else, so a
+        // page that is meant to have one needs a slide in the database. It
+        // used to fall back to a set of brand plates, which let these tests
+        // pass without ever saying a slide existed.
+        HeroSlide::factory()->create(['is_active' => true, 'position' => 0]);
     }
 
     private function publishedProduct(array $attributes = []): Product

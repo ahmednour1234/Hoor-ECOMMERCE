@@ -90,9 +90,16 @@ class SettingsSeeder extends Seeder
             return;
         }
 
+        /*
+         * The Arabic plate is named rather than left to the filename
+         * convention. The convention still works, but naming it here is what
+         * makes the hero's images a property of the row — which is the point
+         * of the slide living in the database at all.
+         */
         $slides = [
             [
-                'image_path'  => 'hero/hero-1.jpg',
+                'image_path'     => 'hero/hero-1.jpg',
+                'image_path_rtl' => 'hero/hero-1-rtl.jpg',
                 'backdrop'    => '#CAB296',
                 'eyebrow_ar'  => 'مجموعة جديدة',
                 'eyebrow_en'  => 'New collection',
@@ -100,7 +107,8 @@ class SettingsSeeder extends Seeder
                 'headline_en' => 'Denim that suits you',
             ],
             [
-                'image_path'  => 'hero/hero-2.jpg',
+                'image_path'     => 'hero/hero-2.jpg',
+                'image_path_rtl' => 'hero/hero-2-rtl.jpg',
                 'backdrop'    => '#CCB49A',
                 'eyebrow_ar'  => 'صُنع في مصر',
                 'eyebrow_en'  => 'Made in Egypt',
@@ -108,7 +116,8 @@ class SettingsSeeder extends Seeder
                 'headline_en' => 'Cuts that respect movement',
             ],
             [
-                'image_path'  => 'hero/hero-3.jpg',
+                'image_path'     => 'hero/hero-3.jpg',
+                'image_path_rtl' => 'hero/hero-3-rtl.jpg',
                 'backdrop'    => '#DDCBB5',
                 'eyebrow_ar'  => 'الدفع عند الاستلام',
                 'eyebrow_en'  => 'Cash on delivery',

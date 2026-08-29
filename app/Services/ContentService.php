@@ -27,12 +27,6 @@ class ContentService
      *
      * @var list<array{image: string, backdrop: string}>
      */
-    private const FALLBACK_SLIDES = [
-        ['image' => 'hero/hero-1.jpg', 'backdrop' => '#CAB296'],
-        ['image' => 'hero/hero-2.jpg', 'backdrop' => '#CCB49A'],
-        ['image' => 'hero/hero-3.jpg', 'backdrop' => '#DDCBB5'],
-    ];
-
     /**
      * Slides for the hero, in the shape the component expects.
      *
@@ -40,16 +34,23 @@ class ContentService
      */
     public function heroSlides(): array
     {
-        $slides = $this->cached('hero_slides', fn (): array => HeroSlide::query()
+        /*
+         * Whatever the shop has published, and nothing else.
+         *
+         * There used to be a set of brand plates here for when no slide was
+         * active. It meant deactivating every slide put three photographs back
+         * on the homepage that the admin could not see, edit or remove from
+         * any screen — the hero stopped answering to the database.
+         *
+         * An empty list is now honoured. The homepage has its own switch for
+         * the hero section, which is the visible way to turn it off.
+         */
+        return $this->cached('hero_slides', fn (): array => HeroSlide::query()
             ->active()
             ->ordered()
             ->get()
             ->map(fn (HeroSlide $slide): array => $slide->toSlideArray())
             ->all());
-
-        // An admin who has deactivated every slide gets the brand plates back
-        // rather than a collapsed hero.
-        return $slides === [] ? self::FALLBACK_SLIDES : $slides;
     }
 
     /**
