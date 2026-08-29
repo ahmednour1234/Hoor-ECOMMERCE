@@ -112,7 +112,14 @@
 
                     const added = incoming.children.length;
 
-                    grid.append(...incoming.children);
+                    const appended = [...incoming.children];
+
+                    grid.append(...appended);
+
+                    // Alpine only walks the document it started on. Nodes moved
+                    // in here are inert until it is told about them, which is
+                    // what left every wishlist heart past the first page dead.
+                    this.startAlpineOn(appended);
 
                     // The address bar follows the results, so a reload or a
                     // shared link lands where the customer actually is.
@@ -134,6 +141,28 @@
                     this.nextUrl = url;
                 } finally {
                     this.appending = false;
+                }
+            },
+
+            /**
+             * Hand fresh elements to Alpine.
+             *
+             * Anything arriving after the page has started — appended by the
+             * infinite scroll, or written in by a filter swap — is plain markup
+             * until Alpine walks it. Its x-data never runs, so the wishlist
+             * hearts do not respond to a click.
+             *
+             * Guarded because Alpine is a module: on a slow connection a
+             * customer can filter before it has loaded, and an unguarded call
+             * would throw and take the whole swap with it.
+             *
+             * @param {Element[]} elements
+             */
+            startAlpineOn(elements) {
+                if (! window.Alpine?.initTree) return;
+
+                for (const element of elements) {
+                    window.Alpine.initTree(element);
                 }
             },
 
@@ -195,6 +224,11 @@
 
                         if (next && current) {
                             current.innerHTML = next.innerHTML;
+
+                            // innerHTML builds elements Alpine has never seen,
+                            // so every component inside the swapped region —
+                            // the wishlist hearts above all — needs starting.
+                            this.startAlpineOn([...current.children]);
                         }
                     }
 

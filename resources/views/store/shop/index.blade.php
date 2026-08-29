@@ -112,7 +112,11 @@
                     <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:grid-cols-3"
                          id="shop-grid">
                         @foreach ($products as $index => $product)
+                            {{-- `saved` comes from one query for the whole
+                                 grid, so the heart is already filled for a
+                                 product she has kept. --}}
                             <x-store.product-card :product="$product"
+                                                  :saved="in_array($product->id, $saved, true)"
                                                   :eager="$index < 3 && $products->onFirstPage()" />
                         @endforeach
                     </div>
