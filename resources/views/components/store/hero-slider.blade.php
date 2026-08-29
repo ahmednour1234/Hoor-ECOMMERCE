@@ -72,9 +72,22 @@
     aria-roledescription="carousel"
     aria-label="{{ __('store.hero.label') }}">
 
-    {{-- Fixed height reserves the space before the photograph loads, so the
-         page never jumps as slides arrive. --}}
-    <div class="relative h-[30rem] w-full sm:h-[32rem] md:h-[30rem] lg:h-[44rem] xl:h-[46rem]">
+    {{--
+        The band reserves its space before the photograph loads, so the page
+        never jumps as slides arrive.
+
+        From lg it is given the plate's own 2:1 ratio rather than a fixed
+        height, which is what lets the whole photograph show. The fixed heights
+        were the reason it did not: at lg, 1024px against a 44rem (704px) band
+        is a ratio of 1.45 against the plate's 2.00, so object-cover kept only
+        73% of the width and cut the model off at both sides — the comment
+        below claimed nothing was cropped there, and the arithmetic disagreed.
+
+        Below lg a 2:1 band would be far too short to hold the headline and the
+        button — 187px on a phone — so those keep a height and accept the crop,
+        which the leading-edge anchor already aims at the model.
+    --}}
+    <div class="relative h-[30rem] w-full sm:h-[32rem] md:h-[30rem] lg:h-auto lg:aspect-[2/1]">
         @foreach ($slides as $index => $slide)
             <div x-show="active === {{ $index }}"
                  x-transition:enter="transition ease-hoor duration-700"
@@ -121,14 +134,18 @@
                          it covers 0%-40%, where she actually is.
 
                          The Arabic plate places her on the other side, so the
-                         anchor flips with the writing direction. From lg the
-                         band is as wide as the plate and nothing is cropped,
-                         which is why the anchor is reset to centre there.
+                         anchor flips with the writing direction.
+
+                         From lg the band carries the plate's own ratio, so
+                         object-contain shows the photograph entire with
+                         nothing to anchor. contain rather than cover because
+                         an admin-uploaded slide need not be 2:1, and cover
+                         would quietly trim whatever they had chosen.
                      --}}
                      :class="active === {{ $index }} ? 'hero-drift' : ''"
                      class="h-full w-full object-cover
                             [object-position:12%_center] rtl:[object-position:88%_center]
-                            lg:object-center">
+                            lg:object-contain lg:object-center">
 
                 {{--
                     This slide's own words.
@@ -213,22 +230,45 @@
             </div>
         @endforeach
 
-        {{-- Arrows --}}
+        {{--
+            Arrows.
+
+            Drawn as SVG rather than set as the ‹ and › glyphs, which inherited
+            the body's font size and rendered as a faint hairline on a button
+            wide enough to look empty.
+
+            rotate-180 on the icon and not the button, so only the chevron
+            turns for Arabic and the shadow keeps its direction.
+        --}}
         @if (count($slides) > 1)
             <button type="button" @click="prev(); start()"
-                    class="absolute start-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center
-                           justify-center rounded-full bg-white/85 text-hoor-navy-600 shadow-card
-                           backdrop-blur transition hover:bg-white lg:start-6"
+                    class="group absolute start-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center
+                           justify-center rounded-full bg-white/90 text-hoor-navy-600 shadow-card
+                           backdrop-blur transition duration-200 ease-hoor
+                           hover:bg-white hover:text-hoor-navy-700 hover:shadow-card-hover
+                           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+                           focus-visible:outline-hoor-navy-500
+                           sm:h-12 sm:w-12 lg:start-6"
                     aria-label="{{ __('store.hero.previous') }}">
-                <span class="rtl:rotate-180" aria-hidden="true">&#8249;</span>
+                <svg class="h-5 w-5 rtl:rotate-180 sm:h-6 sm:w-6" fill="none" stroke="currentColor"
+                     stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
             </button>
 
             <button type="button" @click="next(); start()"
-                    class="absolute end-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center
-                           justify-center rounded-full bg-white/85 text-hoor-navy-600 shadow-card
-                           backdrop-blur transition hover:bg-white lg:end-6"
+                    class="group absolute end-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center
+                           justify-center rounded-full bg-white/90 text-hoor-navy-600 shadow-card
+                           backdrop-blur transition duration-200 ease-hoor
+                           hover:bg-white hover:text-hoor-navy-700 hover:shadow-card-hover
+                           focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+                           focus-visible:outline-hoor-navy-500
+                           sm:h-12 sm:w-12 lg:end-6"
                     aria-label="{{ __('store.hero.next') }}">
-                <span class="rtl:rotate-180" aria-hidden="true">&#8250;</span>
+                <svg class="h-5 w-5 rtl:rotate-180 sm:h-6 sm:w-6" fill="none" stroke="currentColor"
+                     stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
             </button>
 
             {{-- Dots --}}

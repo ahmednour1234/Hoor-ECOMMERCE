@@ -11,6 +11,7 @@ return [
         'empty'   => 'No slides yet. The brand images are showing.',
         'image'   => 'Photograph',
         'image_hint' => 'A wide image, around 2400×1000. The copy sits over it as live text.',
+        'preview_hint' => 'Shown whole here. On the storefront it fills a wide band, so the edges may be trimmed.',
         'backdrop'   => 'Backdrop colour',
         'backdrop_hint' => 'Fills the space beside the photograph on wide screens. Sample it from the image edge.',
         'eyebrow'  => 'Small line above',

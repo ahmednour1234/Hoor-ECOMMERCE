@@ -22,8 +22,20 @@
     @endif
 
     @if ($slide)
+        {{--
+            The whole photograph, uncropped.
+
+            object-cover filled the 12:5 box by cutting the picture down, so an
+            admin checking what they had uploaded saw a version with the heads
+            missing and no way to tell whether the file or the frame was at
+            fault. object-contain shows the file as it is; the tinted ground
+            behind it makes the letterboxing read as the frame rather than as
+            part of the image.
+        --}}
         <img src="{{ $slide->imageUrl() }}" alt=""
-             class="aspect-[12/5] w-full rounded-sm object-cover">
+             class="aspect-[12/5] w-full rounded-sm bg-hoor-cream-100 object-contain">
+
+        <p class="-mt-2 text-xs text-hoor-muted">{{ __('content.slides.preview_hint') }}</p>
     @endif
 
     <div>
